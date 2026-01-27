@@ -20,6 +20,7 @@ public:
 
 protected:
 	float phase;
+	float gain;
 };
 
 } // namespace Vst

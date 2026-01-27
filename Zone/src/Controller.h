@@ -5,6 +5,11 @@
 namespace Steinberg {
 namespace Vst {
 
+enum ZoneParameters : ParamID
+{
+	kParamGainId = 100, // starting at 100
+};
+
 class Controller : public EditController
 {
 public:
