@@ -34,6 +34,11 @@ public:
     mSaturator.resize(mChannelCount);
     mDelay.resize(mChannelCount);
     mReverb.resize(mChannelCount);
+
+    updateEQ();
+    updateComp();
+    updateDelay();
+    updateReverb();
   }
 
   void deInitialize() {}

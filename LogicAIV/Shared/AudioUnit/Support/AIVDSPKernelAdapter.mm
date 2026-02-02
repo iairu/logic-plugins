@@ -6,11 +6,20 @@ Adapter object providing a Swift-accessible interface to the filter's underlying
 DSP code.
 */
 
-#import "AIVDSPKernelAdapter.h"
-#import "AIVDSPKernel.hpp"
-#import "BufferedAudioBus.hpp"
+// 1. C++ Standard Library (must be first in Obj-C++ files sometimes)
+#import <algorithm>
+#import <vector>
+
+// 2. System Frameworks
 #import <AVFoundation/AVFoundation.h>
 #import <CoreAudioKit/AUViewController.h>
+
+// 3. Project Headers (Obj-C)
+#import "AIVDSPKernelAdapter.h"
+#import "BufferedAudioBus.hpp"
+
+// 4. Project Headers (C++)
+#import "AIVDSPKernel.hpp"
 
 @implementation AIVDSPKernelAdapter {
   // C++ members need to be ivars; they would be copied on access if they were
