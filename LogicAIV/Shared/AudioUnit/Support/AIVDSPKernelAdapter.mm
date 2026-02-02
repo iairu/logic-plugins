@@ -8,7 +8,6 @@ DSP code.
 
 #import "AIVDSPKernelAdapter.h"
 #import "AIVDSPKernel.hpp"
-#import "AIVParameterAddresses.h"
 #import "BufferedAudioBus.hpp"
 #import <AVFoundation/AVFoundation.h>
 #import <CoreAudioKit/AUViewController.h>

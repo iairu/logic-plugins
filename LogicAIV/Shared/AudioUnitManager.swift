@@ -163,8 +163,8 @@ public class AudioUnitManager {
             fatalError("AIVDemo does not define any parameters.")
         }
 
-        cutoffParameter = parameterTree.value(forKey: "cutoff") as? AUParameter
-        resonanceParameter = parameterTree.value(forKey: "resonance") as? AUParameter
+        cutoffParameter = parameterTree.value(forKey: "eq1Freq") as? AUParameter
+        resonanceParameter = parameterTree.value(forKey: "eq1Q") as? AUParameter
 
         parameterObserverToken = parameterTree.token(byAddingParameterObserver: { [weak self] address, _ in
             guard let self = self else { return }

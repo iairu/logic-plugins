@@ -185,7 +185,7 @@ class AIVDemoParameters {
         }
 
         parameterTree.implementorStringFromValueCallback = { param, value in
-            let v = value ?? param.value
+            let v = value?.pointee ?? param.value
             return String(format: "%.2f", v)
         }
     }
