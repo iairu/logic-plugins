@@ -10,9 +10,9 @@ struct DynamicsModuleView: View {
             // Noise Gate (New)
             EffectGroup(title: "INTELLIGENT GATE") {
                 HStack(spacing: 20) {
-                    ArcKnob(value: $viewModel.gateThresh, range: -80...0, title: "THRESH", suffix: "dB")
-                    ArcKnob(value: $viewModel.gateRange, range: -80...0, title: "RANGE", suffix: "dB")
-                    ArcKnob(value: $viewModel.gateHysteresis, range: 0...12, title: "HYST", suffix: "dB")
+                    ArcKnob(value: $viewModel.gateThresh, range: -80...0, title: "THRESH", unit: "dB")
+                    ArcKnob(value: $viewModel.gateRange, range: -80...0, title: "RANGE", unit: "dB")
+                    ArcKnob(value: $viewModel.gateHysteresis, range: 0...12, title: "HYST", unit: "dB")
                     
                     VStack(spacing: 5) {
                         ModernSlider(value: $viewModel.gateAttack, range: 0.01...100, title: "ATTACK")
@@ -37,9 +37,9 @@ struct DynamicsModuleView: View {
             // De-Esser
             EffectGroup(title: "DE-ESSER") {
                 HStack(spacing: 20) {
-                    ArcKnob(value: $viewModel.deesserThresh, range: -60...0, title: "THRESH", suffix: "dB")
-                    ArcKnob(value: $viewModel.deesserFreq, range: 2000...12000, title: "FREQ", suffix: "Hz")
-                    ArcKnob(value: $viewModel.deesserRange, range: -24...0, title: "RANGE", suffix: "dB")
+                    ArcKnob(value: $viewModel.deesserThresh, range: -60...0, title: "THRESH", unit: "dB")
+                    ArcKnob(value: $viewModel.deesserFreq, range: 2000...12000, title: "FREQ", unit: "Hz")
+                    ArcKnob(value: $viewModel.deesserRange, range: -24...0, title: "RANGE", unit: "dB")
                     ArcKnob(value: $viewModel.deesserRatio, range: 1...20, title: "RATIO")
                 }
             }
@@ -50,7 +50,6 @@ struct DynamicsModuleView: View {
                     HStack {
                         ArcKnob(value: $viewModel.compInput, range: -48...12, title: "INPUT", unit: "dB")
                         ArcKnob(value: $viewModel.compRatio, range: 1...20, title: "RATIO")
-                    }
                     }
                     HStack {
                         ArcKnob(value: $viewModel.compAttack, range: 0.02...0.8, title: "ATTACK", unit: "ms")

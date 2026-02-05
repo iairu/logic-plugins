@@ -107,3 +107,10 @@ when done update UX and UI based on robust code from prompt 1.2 from 7_PROMPT_GA
 
 update AIV and AIVExtension with proper UI and UX, add more code and utilize extension tabs for different modules
 
+---
+
+for some reason instead of AIVMainView.swift being the main view it is actually AIVDemoViewController.swift which contains the old and still shown AIVMainView, please fix this
+
+---
+
+whenever i rotate any knobs on noise gate or de-esser or limiter it never adjusts to the new value and stays reset, when i try to return pitch back it doesn't do so, only forwarding pitch works but isnt normalised to original audio level, compressor default attack is 10 but knob only allows 0.0 to 1.0 rotation

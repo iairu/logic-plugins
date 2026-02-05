@@ -9,6 +9,7 @@ import Foundation
 import AudioToolbox
 import AVFoundation
 import CoreAudioKit
+import AIVFramework
 
 fileprivate extension AUAudioUnitPreset {
     convenience init(number: Int, name: String) {

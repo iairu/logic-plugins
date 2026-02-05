@@ -2,7 +2,7 @@ import SwiftUI
 import CoreAudioKit
 import AIVFramework
 
-class AudioUnitViewModel: ObservableObject {
+public class AudioUnitViewModel: ObservableObject {
     // Global
     @Published var gain: Double = 0.5 { didSet { setParam(gainParam, gain) } }
     @Published var bypass: Double = 0.0 { didSet { setParam(bypassParam, bypass) } }

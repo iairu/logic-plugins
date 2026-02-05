@@ -2,62 +2,57 @@ import SwiftUI
 import CoreAudioKit
 import AIVFramework
 
-struct AIVMainView: View {
-    @StateObject var viewModel = AudioUnitViewModel()
-    var audioUnit: AIVDemo?
+public struct AIVMainView: View {
+    @StateObject public var viewModel = AudioUnitViewModel()
+    public var audioUnit: AIVDemo?
+
+    public init(audioUnit: AIVDemo? = nil) {
+        self.audioUnit = audioUnit
+    }
     
-    var body: some View {
+    public var body: some View {
         ZStack {
-            Color(red: 0.12, green: 0.12, blue: 0.14).edgesIgnoringSafeArea(.all)
+            // Dark Background
+            Color(red: 0.08, green: 0.08, blue: 0.10).edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 0) {
-                // Header
+                // Header (Fixed)
                 HStack {
                     Text("AIV VOCAL CHAIN")
                         .font(.system(size: 18, weight: .bold, design: .serif))
                         .foregroundColor(.white)
-                        .tracking(2)
+                        .tracking(3)
+                        .shadow(color: .white.opacity(0.2), radius: 5)
                     
                     Spacer()
                     
-                    Toggle("BYPASS", isOn: Binding(get: { viewModel.bypass > 0.5 }, set: { viewModel.bypass = $0 ? 1 : 0 }))
-                        .toggleStyle(SwitchToggleStyle(tint: .cyan))
+                    Text("RACK VIEW")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(4)
                 }
                 .padding()
-                .background(Color(red: 0.15, green: 0.15, blue: 0.17))
+                .background(Color(red: 0.12, green: 0.12, blue: 0.14))
+                .shadow(radius: 5)
+                .zIndex(1) // Keep header above scroll
                 
-                // Tab Navigation
-                TabView {
-                    InputModuleView(viewModel: viewModel)
-                        .tabItem {
-                            Label("INPUT", systemImage: "slider.vertical.3")
-                        }
-                    
-                    DynamicsModuleView(viewModel: viewModel)
-                        .tabItem {
-                            Label("DYNAMICS", systemImage: "waveform.path.ecg")
-                        }
-                    
-                    EQModuleView(viewModel: viewModel)
-                        .tabItem {
-                            Label("EQ", systemImage: "dial.min")
-                        }
-                    
-                    SpatialModuleView(viewModel: viewModel)
-                        .tabItem {
-                            Label("SPATIAL", systemImage: "dot.radiowaves.left.and.right")
-                        }
+                // Scrollable Rack
+                ScrollView(.vertical, showsIndicators: true) {
+                    VStack(spacing: 15) {
+                        InputPanel(viewModel: viewModel)
+                        GatePanel(viewModel: viewModel)
+                        PitchDeesserPanel(viewModel: viewModel)
+                        EQPanel(viewModel: viewModel)
+                        DynamicsPanel(viewModel: viewModel)
+                        SpatialPanel(viewModel: viewModel)
+                        OutputPanel(viewModel: viewModel)
+                    }
+                    .padding()
+                    .padding(.bottom, 40)
                 }
-                .accentColor(.cyan)
-                .preferredColorScheme(.dark)
-                
-                // Global Output
-                HStack {
-                    Text("OUTPUT").font(.caption).foregroundColor(.gray)
-                    ModernSlider(value: $viewModel.gain, range: 0...1, title: "MASTER GAIN")
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 20)
             }
         }
         .onAppear {

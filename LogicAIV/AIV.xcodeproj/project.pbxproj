@@ -7,6 +7,50 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		021E07B43F5B1C2E4CF63DB1 /* AudioUnitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775D8E01F6037735FCE30DA5 /* AudioUnitManager.swift */; };
+		06CAAB350A7241BB88BB39CE /* AIVDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A2AD7FCC2F900967803B27 /* AIVDemo.swift */; };
+		08DA29AC54FD7FC712001331 /* AudioUnitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE1D84B3CB651BEBF1796EBA /* AudioUnitViewModel.swift */; };
+		1322A6FF31A02D446CE1CAED /* DynamicsModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CAAD8EC131C619F7B77A3A /* DynamicsModuleView.swift */; };
+		13FAB1226B2455D23A6EBC6F /* DynamicsModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CAAD8EC131C619F7B77A3A /* DynamicsModuleView.swift */; };
+		1497F17D74062D4E37FEB14F /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9028389475D79354146F9A63 /* ViewExtensions.swift */; };
+		17F3A89D83E236D8316F6640 /* TypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB54DCEB176A4447C36732C /* TypeAliases.swift */; };
+		1B47BAB96B81A96D440AA4D9 /* InputModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0126314CA36542E35E5071A /* InputModuleView.swift */; };
+		1C92973B9DB4352FB14D2A4E /* AIVDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C56744C4E2E91633600862 /* AIVDemoViewController.swift */; };
+		1F937C0570B7942496F28F3F /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E39623E5BCEF106BDD3DCA1 /* FilterView.swift */; };
+		2320A99F48866CAFB1F5E226 /* SpatialModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C0D98F8EDC248A9A7183D0 /* SpatialModuleView.swift */; };
+		234CC23F471E5F63B4D8600C /* RackModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5C185F561DE508C39A3641 /* RackModules.swift */; };
+		291A9D48DCB392FF02024353 /* DynamicsModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CAAD8EC131C619F7B77A3A /* DynamicsModuleView.swift */; };
+		411C9AA48DDD6B24016BE16A /* TypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB54DCEB176A4447C36732C /* TypeAliases.swift */; };
+		45A920DF4C78C55D352D9F42 /* SimplePlayEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B89FE019D796F1F0F1B6BE /* SimplePlayEngine.swift */; };
+		479FECAC5165505785B0209A /* AudioUnitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE1D84B3CB651BEBF1796EBA /* AudioUnitViewModel.swift */; };
+		4970719AA3B21FDE0F8AAF20 /* AudioUnitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775D8E01F6037735FCE30DA5 /* AudioUnitManager.swift */; };
+		529D873A1695085CA4A356AC /* AIVDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C56744C4E2E91633600862 /* AIVDemoViewController.swift */; };
+		68C3FAE046C38C7ECDD51274 /* AIVControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD359FD33551756FBC09C6 /* AIVControls.swift */; };
+		6CECEFA7E2416D524CD77E19 /* AIVDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A2AD7FCC2F900967803B27 /* AIVDemo.swift */; };
+		6D8729217C42FD392863D32D /* EQModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2633499495316501F34F8B88 /* EQModuleView.swift */; };
+		6E2A629E35802190C0215FF9 /* EQModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2633499495316501F34F8B88 /* EQModuleView.swift */; };
+		6EE7E97983A89BA81746F4F9 /* SpatialModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C0D98F8EDC248A9A7183D0 /* SpatialModuleView.swift */; };
+		763D4675F34119075EC7BB79 /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E39623E5BCEF106BDD3DCA1 /* FilterView.swift */; };
+		7ABCBF180686DB6A167FC1C6 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9028389475D79354146F9A63 /* ViewExtensions.swift */; };
+		7B66F1C5547AE552FB95482E /* InputModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0126314CA36542E35E5071A /* InputModuleView.swift */; };
+		7F2AC0B4A23AF285A537BF95 /* SpatialModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C0D98F8EDC248A9A7183D0 /* SpatialModuleView.swift */; };
+		80BD56E1DB74CA6054A56B55 /* AIVDemoParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6798677F3C65FE1D21C2FDB8 /* AIVDemoParameters.swift */; };
+		8188F7AE9855615C3CF2BEB5 /* EQModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2633499495316501F34F8B88 /* EQModuleView.swift */; };
+		8568AAC485F4DF2D468C7C12 /* EQModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2633499495316501F34F8B88 /* EQModuleView.swift */; };
+		8585034A37A77E597F0D37AE /* AIVDemoParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6798677F3C65FE1D21C2FDB8 /* AIVDemoParameters.swift */; };
+		90B14A82E427DE8CD6BCFEA5 /* AudioUnitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE1D84B3CB651BEBF1796EBA /* AudioUnitViewModel.swift */; };
+		9143CC1F4FE372EAE59CCC83 /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E39623E5BCEF106BDD3DCA1 /* FilterView.swift */; };
+		91BC693695CDC5F5C576BB05 /* AIVDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C56744C4E2E91633600862 /* AIVDemoViewController.swift */; };
+		943393677A4FDF1A9096525E /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E39623E5BCEF106BDD3DCA1 /* FilterView.swift */; };
+		A187DA0D3456B4725FCB100A /* TypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB54DCEB176A4447C36732C /* TypeAliases.swift */; };
+		A60ECF59DDCC45FB2B3D734F /* DynamicsModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CAAD8EC131C619F7B77A3A /* DynamicsModuleView.swift */; };
+		A71128DEEEDDD17AE08DC61D /* AIVMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA84AF94DD70D591C4E51CB1 /* AIVMainView.swift */; };
+		A83EF54777C06492BDE6E0E6 /* InputModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0126314CA36542E35E5071A /* InputModuleView.swift */; };
+		A9965E13ADF01AB33A1A0F29 /* SimplePlayEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B89FE019D796F1F0F1B6BE /* SimplePlayEngine.swift */; };
+		AB6D5F2619A36B543466821E /* AIVControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD359FD33551756FBC09C6 /* AIVControls.swift */; };
+		AE6430DE921ABF75E0F43BFE /* InputModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0126314CA36542E35E5071A /* InputModuleView.swift */; };
+		B2DC7039661DEAF60D38D88E /* AIVDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A2AD7FCC2F900967803B27 /* AIVDemo.swift */; };
+		B55A3818192CE95E051907A0 /* AudioUnitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE1D84B3CB651BEBF1796EBA /* AudioUnitViewModel.swift */; };
 		C4201A2922403120006E4333 /* AIVDemoViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4201A2822403120006E4333 /* AIVDemoViewControllerExtension.swift */; };
 		C433F56122404C7C00F1B750 /* AIVDemoViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C433F56022404C7C00F1B750 /* AIVDemoViewControllerExtension.swift */; };
 		C437FE59222367CD008D6C09 /* AIVFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C437FE52222367CD008D6C09 /* AIVFramework.framework */; };
@@ -66,6 +110,26 @@
 		C4F07732223AC4F5008FFF06 /* AIVDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F07730223AC4F5008FFF06 /* AIVDemoViewController.swift */; };
 		C4F07735223ACB91008FFF06 /* Synth.aif in Resources */ = {isa = PBXBuildFile; fileRef = C4F07734223ACB91008FFF06 /* Synth.aif */; };
 		C4F07736223ACB91008FFF06 /* Synth.aif in Resources */ = {isa = PBXBuildFile; fileRef = C4F07734223ACB91008FFF06 /* Synth.aif */; };
+		C8EE2621D3155B318D351EBC /* SimplePlayEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B89FE019D796F1F0F1B6BE /* SimplePlayEngine.swift */; };
+		C94E3EC528AC4D1E7A347A0F /* AIVMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA84AF94DD70D591C4E51CB1 /* AIVMainView.swift */; };
+		CB105DC9E7DD1712935DE8F1 /* AIVDemoParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6798677F3C65FE1D21C2FDB8 /* AIVDemoParameters.swift */; };
+		CE0D096B9D32BCF7A7C163D4 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9028389475D79354146F9A63 /* ViewExtensions.swift */; };
+		D00B8F2BCDF2783727296A2D /* RackModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5C185F561DE508C39A3641 /* RackModules.swift */; };
+		D188C9BD62E5978FAB6047F8 /* AudioUnitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775D8E01F6037735FCE30DA5 /* AudioUnitManager.swift */; };
+		D806F28E7CA4E458DFD16130 /* AudioUnitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775D8E01F6037735FCE30DA5 /* AudioUnitManager.swift */; };
+		DA66C906F692DBD85C9E9F5E /* AIVDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C56744C4E2E91633600862 /* AIVDemoViewController.swift */; };
+		DB5FDD6D72066875FC1A634B /* SpatialModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C0D98F8EDC248A9A7183D0 /* SpatialModuleView.swift */; };
+		DDEB519E3958F47785474D84 /* AIVMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA84AF94DD70D591C4E51CB1 /* AIVMainView.swift */; };
+		DDF816035F7F842DA5571752 /* AIVDemoParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6798677F3C65FE1D21C2FDB8 /* AIVDemoParameters.swift */; };
+		E056FE097D24DEB5CB74C771 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9028389475D79354146F9A63 /* ViewExtensions.swift */; };
+		E653E3CC192F26E5501C3F50 /* TypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB54DCEB176A4447C36732C /* TypeAliases.swift */; };
+		EB62AB3B5D68A9EB272347DC /* AIVMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA84AF94DD70D591C4E51CB1 /* AIVMainView.swift */; };
+		EEA1326A000E36D12760C409 /* RackModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5C185F561DE508C39A3641 /* RackModules.swift */; };
+		F615102175895C330410044F /* AIVDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67A2AD7FCC2F900967803B27 /* AIVDemo.swift */; };
+		F64F4564FDAAB28628848DE7 /* AIVControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD359FD33551756FBC09C6 /* AIVControls.swift */; };
+		FB0478754A76C15A34592C42 /* SimplePlayEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B89FE019D796F1F0F1B6BE /* SimplePlayEngine.swift */; };
+		FBB31E6BFD2942529ED202B4 /* RackModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5C185F561DE508C39A3641 /* RackModules.swift */; };
+		FC742E08FC7AA7F88255483D /* AIVControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD359FD33551756FBC09C6 /* AIVControls.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -147,8 +211,37 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0E39623E5BCEF106BDD3DCA1 /* FilterView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
+		126A4FD48FA0D3CA20B9289C /* AIVDemoViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVDemoViewController.swift; sourceTree = "<group>"; };
+		15233594350D582B11ED2868 /* TypeAliases.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TypeAliases.swift; sourceTree = "<group>"; };
+		20DD9C474BB604AE74E986F4 /* ViewExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
+		2633499495316501F34F8B88 /* EQModuleView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EQModuleView.swift; sourceTree = "<group>"; };
+		2840C0361088C3AC4E4C739A /* AIVDemo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVDemo.swift; sourceTree = "<group>"; };
+		3D21404A1C7AB37C9CA742CA /* AIVMainView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVMainView.swift; sourceTree = "<group>"; };
 		4311B2DA5B4A02595B1F8E6D /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		4489E6B330171D8696AF0DB9 /* AIVDemo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVDemo.swift; sourceTree = "<group>"; };
+		4E4ACE3CEB2EF3BA455CF450 /* TypeAliases.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TypeAliases.swift; sourceTree = "<group>"; };
+		580C05CE9B0C0F6256A3421B /* SimplePlayEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SimplePlayEngine.swift; sourceTree = "<group>"; };
+		6798677F3C65FE1D21C2FDB8 /* AIVDemoParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVDemoParameters.swift; sourceTree = "<group>"; };
+		67A2AD7FCC2F900967803B27 /* AIVDemo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVDemo.swift; sourceTree = "<group>"; };
+		6A6BEB62988073E77281E0A9 /* AudioUnitManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AudioUnitManager.swift; sourceTree = "<group>"; };
+		775D8E01F6037735FCE30DA5 /* AudioUnitManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AudioUnitManager.swift; sourceTree = "<group>"; };
+		79D77A1E1148ADFE18D5C1C2 /* AIVMainView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVMainView.swift; sourceTree = "<group>"; };
+		7ADD6D9F4A1888557E2567C6 /* ViewExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
+		7DD36D65F7331EACE005424B /* FilterView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
 		7E56CF207E56CEE000000001 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		82B89FE019D796F1F0F1B6BE /* SimplePlayEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SimplePlayEngine.swift; sourceTree = "<group>"; };
+		855A412676B3CE975ECE4345 /* RackModules.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RackModules.swift; sourceTree = "<group>"; };
+		9028389475D79354146F9A63 /* ViewExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
+		91CAAD8EC131C619F7B77A3A /* DynamicsModuleView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DynamicsModuleView.swift; sourceTree = "<group>"; };
+		92C56744C4E2E91633600862 /* AIVDemoViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVDemoViewController.swift; sourceTree = "<group>"; };
+		92D26F55437A7C139D521A05 /* AIVDemoParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVDemoParameters.swift; sourceTree = "<group>"; };
+		93BD359FD33551756FBC09C6 /* AIVControls.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVControls.swift; sourceTree = "<group>"; };
+		A35C90DB7503979DAC6739CF /* FilterView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
+		AE1D84B3CB651BEBF1796EBA /* AudioUnitViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AudioUnitViewModel.swift; sourceTree = "<group>"; };
+		B2C0D98F8EDC248A9A7183D0 /* SpatialModuleView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SpatialModuleView.swift; sourceTree = "<group>"; };
+		B733C0152E20AA7D9AFF8B55 /* RackModules.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RackModules.swift; sourceTree = "<group>"; };
+		BB5C185F561DE508C39A3641 /* RackModules.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RackModules.swift; sourceTree = "<group>"; };
 		C4201A2822403120006E4333 /* AIVDemoViewControllerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIVDemoViewControllerExtension.swift; sourceTree = "<group>"; };
 		C433F56022404C7C00F1B750 /* AIVDemoViewControllerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIVDemoViewControllerExtension.swift; sourceTree = "<group>"; };
 		C437FE3A222367A6008D6C09 /* AIV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIV.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,6 +255,7 @@
 		C44F544822260E4200484B67 /* AIVExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIVExtension.swift; sourceTree = "<group>"; };
 		C4737B092231D918002CAD0B /* AIV.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AIV.entitlements; sourceTree = "<group>"; };
 		C4737B0A2231D930002CAD0B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		C47C0E95C1F0456D33D4D2DC /* AIVDemoViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVDemoViewController.swift; sourceTree = "<group>"; };
 		C496341022238CDD001D1F5B /* NSTextFieldExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSTextFieldExtensions.swift; sourceTree = "<group>"; };
 		C496341122238CDD001D1F5B /* NSStoryboardExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSStoryboardExtensions.swift; sourceTree = "<group>"; };
 		C4A3D65A223FF12A002784D4 /* SimplePlayEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimplePlayEngine.swift; sourceTree = "<group>"; };
@@ -203,6 +297,16 @@
 		C4F07730223AC4F5008FFF06 /* AIVDemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIVDemoViewController.swift; sourceTree = "<group>"; };
 		C4F07734223ACB91008FFF06 /* Synth.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = Synth.aif; sourceTree = "<group>"; };
 		C6DC5208287CAC940AAA55F3 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		C910AEBB46AA6A6E977BF226 /* AudioUnitManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AudioUnitManager.swift; sourceTree = "<group>"; };
+		C994F92DF7268BEE012E6245 /* AIVControls.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVControls.swift; sourceTree = "<group>"; };
+		D0126314CA36542E35E5071A /* InputModuleView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputModuleView.swift; sourceTree = "<group>"; };
+		D29CF807F139631A3593AD6A /* AudioUnitViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AudioUnitViewModel.swift; sourceTree = "<group>"; };
+		D7A7C68E890D64E916DF3A02 /* AIVDemoParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVDemoParameters.swift; sourceTree = "<group>"; };
+		DAB54DCEB176A4447C36732C /* TypeAliases.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TypeAliases.swift; sourceTree = "<group>"; };
+		E3EF9A3178CC4B05029B905C /* AudioUnitViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AudioUnitViewModel.swift; sourceTree = "<group>"; };
+		EABDB03E8E2AFF8D760E9CBD /* SimplePlayEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SimplePlayEngine.swift; sourceTree = "<group>"; };
+		FA84AF94DD70D591C4E51CB1 /* AIVMainView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVMainView.swift; sourceTree = "<group>"; };
+		FD3F65152E86756EDED35E86 /* AIVControls.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIVControls.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -386,6 +490,12 @@
 				C4F07730223AC4F5008FFF06 /* AIVDemoViewController.swift */,
 				C4BEE7E122236E99001E6B6D /* AudioUnit */,
 				C4F07733223AC506008FFF06 /* Support */,
+				92C56744C4E2E91633600862 /* AIVDemoViewController.swift */,
+				775D8E01F6037735FCE30DA5 /* AudioUnitManager.swift */,
+				126A4FD48FA0D3CA20B9289C /* AIVDemoViewController.swift */,
+				C910AEBB46AA6A6E977BF226 /* AudioUnitManager.swift */,
+				C47C0E95C1F0456D33D4D2DC /* AIVDemoViewController.swift */,
+				6A6BEB62988073E77281E0A9 /* AudioUnitManager.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -396,6 +506,12 @@
 				C4F004A52239B2070014E248 /* AIVDemo.swift */,
 				C4F0772D223AACBB008FFF06 /* AIVDemoParameters.swift */,
 				C4BEE7E422236E99001E6B6D /* Support */,
+				6798677F3C65FE1D21C2FDB8 /* AIVDemoParameters.swift */,
+				67A2AD7FCC2F900967803B27 /* AIVDemo.swift */,
+				92D26F55437A7C139D521A05 /* AIVDemoParameters.swift */,
+				4489E6B330171D8696AF0DB9 /* AIVDemo.swift */,
+				D7A7C68E890D64E916DF3A02 /* AIVDemoParameters.swift */,
+				2840C0361088C3AC4E4C739A /* AIVDemo.swift */,
 			);
 			path = AudioUnit;
 			sourceTree = "<group>";
@@ -431,6 +547,9 @@
 			children = (
 				C4F07734223ACB91008FFF06 /* Synth.aif */,
 				C4A3D65A223FF12A002784D4 /* SimplePlayEngine.swift */,
+				82B89FE019D796F1F0F1B6BE /* SimplePlayEngine.swift */,
+				EABDB03E8E2AFF8D760E9CBD /* SimplePlayEngine.swift */,
+				580C05CE9B0C0F6256A3421B /* SimplePlayEngine.swift */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -441,6 +560,28 @@
 				C4BEE7D922236E99001E6B6D /* FilterView.swift */,
 				C4BEE7DB22236E99001E6B6D /* TypeAliases.swift */,
 				C4BEE7D722236E99001E6B6D /* ViewExtensions.swift */,
+				FA84AF94DD70D591C4E51CB1 /* AIVMainView.swift */,
+				93BD359FD33551756FBC09C6 /* AIVControls.swift */,
+				9028389475D79354146F9A63 /* ViewExtensions.swift */,
+				AE1D84B3CB651BEBF1796EBA /* AudioUnitViewModel.swift */,
+				0E39623E5BCEF106BDD3DCA1 /* FilterView.swift */,
+				BB5C185F561DE508C39A3641 /* RackModules.swift */,
+				DAB54DCEB176A4447C36732C /* TypeAliases.swift */,
+				F24E2345314C9959CB727C91 /* Modules */,
+				79D77A1E1148ADFE18D5C1C2 /* AIVMainView.swift */,
+				C994F92DF7268BEE012E6245 /* AIVControls.swift */,
+				7ADD6D9F4A1888557E2567C6 /* ViewExtensions.swift */,
+				E3EF9A3178CC4B05029B905C /* AudioUnitViewModel.swift */,
+				7DD36D65F7331EACE005424B /* FilterView.swift */,
+				855A412676B3CE975ECE4345 /* RackModules.swift */,
+				15233594350D582B11ED2868 /* TypeAliases.swift */,
+				3D21404A1C7AB37C9CA742CA /* AIVMainView.swift */,
+				FD3F65152E86756EDED35E86 /* AIVControls.swift */,
+				20DD9C474BB604AE74E986F4 /* ViewExtensions.swift */,
+				D29CF807F139631A3593AD6A /* AudioUnitViewModel.swift */,
+				A35C90DB7503979DAC6739CF /* FilterView.swift */,
+				B733C0152E20AA7D9AFF8B55 /* RackModules.swift */,
+				4E4ACE3CEB2EF3BA455CF450 /* TypeAliases.swift */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -468,6 +609,18 @@
 				C6DC5208287CAC940AAA55F3 /* LICENSE.txt */,
 			);
 			path = LICENSE;
+			sourceTree = "<group>";
+		};
+		F24E2345314C9959CB727C91 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				91CAAD8EC131C619F7B77A3A /* DynamicsModuleView.swift */,
+				D0126314CA36542E35E5071A /* InputModuleView.swift */,
+				B2C0D98F8EDC248A9A7183D0 /* SpatialModuleView.swift */,
+				2633499495316501F34F8B88 /* EQModuleView.swift */,
+			);
+			name = Modules;
+			path = Modules;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -766,6 +919,22 @@
 				C4BEE80422236F6F001E6B6D /* TypeAliases.swift in Sources */,
 				C4F0772E223AACBB008FFF06 /* AIVDemoParameters.swift in Sources */,
 				C4F004A32239B1E10014E248 /* AIVDSPKernelAdapter.mm in Sources */,
+				91BC693695CDC5F5C576BB05 /* AIVDemoViewController.swift in Sources */,
+				4970719AA3B21FDE0F8AAF20 /* AudioUnitManager.swift in Sources */,
+				FB0478754A76C15A34592C42 /* SimplePlayEngine.swift in Sources */,
+				A71128DEEEDDD17AE08DC61D /* AIVMainView.swift in Sources */,
+				68C3FAE046C38C7ECDD51274 /* AIVControls.swift in Sources */,
+				E056FE097D24DEB5CB74C771 /* ViewExtensions.swift in Sources */,
+				90B14A82E427DE8CD6BCFEA5 /* AudioUnitViewModel.swift in Sources */,
+				943393677A4FDF1A9096525E /* FilterView.swift in Sources */,
+				234CC23F471E5F63B4D8600C /* RackModules.swift in Sources */,
+				17F3A89D83E236D8316F6640 /* TypeAliases.swift in Sources */,
+				CB105DC9E7DD1712935DE8F1 /* AIVDemoParameters.swift in Sources */,
+				B2DC7039661DEAF60D38D88E /* AIVDemo.swift in Sources */,
+				1322A6FF31A02D446CE1CAED /* DynamicsModuleView.swift in Sources */,
+				A83EF54777C06492BDE6E0E6 /* InputModuleView.swift in Sources */,
+				DB5FDD6D72066875FC1A634B /* SpatialModuleView.swift in Sources */,
+				6E2A629E35802190C0215FF9 /* EQModuleView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -774,6 +943,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				C433F56122404C7C00F1B750 /* AIVDemoViewControllerExtension.swift in Sources */,
+				1C92973B9DB4352FB14D2A4E /* AIVDemoViewController.swift in Sources */,
+				D188C9BD62E5978FAB6047F8 /* AudioUnitManager.swift in Sources */,
+				A9965E13ADF01AB33A1A0F29 /* SimplePlayEngine.swift in Sources */,
+				EB62AB3B5D68A9EB272347DC /* AIVMainView.swift in Sources */,
+				FC742E08FC7AA7F88255483D /* AIVControls.swift in Sources */,
+				1497F17D74062D4E37FEB14F /* ViewExtensions.swift in Sources */,
+				479FECAC5165505785B0209A /* AudioUnitViewModel.swift in Sources */,
+				1F937C0570B7942496F28F3F /* FilterView.swift in Sources */,
+				FBB31E6BFD2942529ED202B4 /* RackModules.swift in Sources */,
+				E653E3CC192F26E5501C3F50 /* TypeAliases.swift in Sources */,
+				80BD56E1DB74CA6054A56B55 /* AIVDemoParameters.swift in Sources */,
+				6CECEFA7E2416D524CD77E19 /* AIVDemo.swift in Sources */,
+				A60ECF59DDCC45FB2B3D734F /* DynamicsModuleView.swift in Sources */,
+				AE6430DE921ABF75E0F43BFE /* InputModuleView.swift in Sources */,
+				2320A99F48866CAFB1F5E226 /* SpatialModuleView.swift in Sources */,
+				8188F7AE9855615C3CF2BEB5 /* EQModuleView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -803,6 +988,22 @@
 				C4201A2922403120006E4333 /* AIVDemoViewControllerExtension.swift in Sources */,
 				C4A3D65C223FF12A002784D4 /* SimplePlayEngine.swift in Sources */,
 				C4F004A42239B1E10014E248 /* AIVDSPKernelAdapter.mm in Sources */,
+				DA66C906F692DBD85C9E9F5E /* AIVDemoViewController.swift in Sources */,
+				021E07B43F5B1C2E4CF63DB1 /* AudioUnitManager.swift in Sources */,
+				C8EE2621D3155B318D351EBC /* SimplePlayEngine.swift in Sources */,
+				DDEB519E3958F47785474D84 /* AIVMainView.swift in Sources */,
+				AB6D5F2619A36B543466821E /* AIVControls.swift in Sources */,
+				7ABCBF180686DB6A167FC1C6 /* ViewExtensions.swift in Sources */,
+				08DA29AC54FD7FC712001331 /* AudioUnitViewModel.swift in Sources */,
+				763D4675F34119075EC7BB79 /* FilterView.swift in Sources */,
+				EEA1326A000E36D12760C409 /* RackModules.swift in Sources */,
+				A187DA0D3456B4725FCB100A /* TypeAliases.swift in Sources */,
+				8585034A37A77E597F0D37AE /* AIVDemoParameters.swift in Sources */,
+				06CAAB350A7241BB88BB39CE /* AIVDemo.swift in Sources */,
+				13FAB1226B2455D23A6EBC6F /* DynamicsModuleView.swift in Sources */,
+				7B66F1C5547AE552FB95482E /* InputModuleView.swift in Sources */,
+				6EE7E97983A89BA81746F4F9 /* SpatialModuleView.swift in Sources */,
+				8568AAC485F4DF2D468C7C12 /* EQModuleView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -811,6 +1012,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				C44F544A22260E4A00484B67 /* AIVExtension.swift in Sources */,
+				529D873A1695085CA4A356AC /* AIVDemoViewController.swift in Sources */,
+				D806F28E7CA4E458DFD16130 /* AudioUnitManager.swift in Sources */,
+				45A920DF4C78C55D352D9F42 /* SimplePlayEngine.swift in Sources */,
+				C94E3EC528AC4D1E7A347A0F /* AIVMainView.swift in Sources */,
+				F64F4564FDAAB28628848DE7 /* AIVControls.swift in Sources */,
+				CE0D096B9D32BCF7A7C163D4 /* ViewExtensions.swift in Sources */,
+				B55A3818192CE95E051907A0 /* AudioUnitViewModel.swift in Sources */,
+				9143CC1F4FE372EAE59CCC83 /* FilterView.swift in Sources */,
+				D00B8F2BCDF2783727296A2D /* RackModules.swift in Sources */,
+				411C9AA48DDD6B24016BE16A /* TypeAliases.swift in Sources */,
+				DDF816035F7F842DA5571752 /* AIVDemoParameters.swift in Sources */,
+				F615102175895C330410044F /* AIVDemo.swift in Sources */,
+				291A9D48DCB392FF02024353 /* DynamicsModuleView.swift in Sources */,
+				1B47BAB96B81A96D440AA4D9 /* InputModuleView.swift in Sources */,
+				7F2AC0B4A23AF285A537BF95 /* SpatialModuleView.swift in Sources */,
+				6D8729217C42FD392863D32D /* EQModuleView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1146,6 +1363,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Shared/AudioUnit/Support",
+				);
 				INFOPLIST_FILE = iOS/AIVFramework/Info.plist;
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1225,6 +1446,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Shared/AudioUnit/Support",
+				);
 				INFOPLIST_FILE = iOS/AIVFramework/Info.plist;
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1605,6 +1830,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Shared/AudioUnit/Support",
+				);
 				INFOPLIST_FILE = macOS/AIVFramework/Info.plist;
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1686,6 +1915,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Shared/AudioUnit/Support",
+				);
 				INFOPLIST_FILE = macOS/AIVFramework/Info.plist;
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = (

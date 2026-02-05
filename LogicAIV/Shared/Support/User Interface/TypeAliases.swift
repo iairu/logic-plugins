@@ -7,12 +7,12 @@ Type alias mapping to normalize AppKit and UIKit interfaces to support cross-pla
 
 #if os(iOS)
 import UIKit
-public typealias Color = UIColor
-public typealias Font = UIFont
+public typealias PlatformColor = UIColor
+public typealias PlatformFont = UIFont
 
 public typealias Storyboard = UIStoryboard
 
-public typealias View = UIView
+public typealias PlatformView = UIView
 public typealias TextField = UITextField
 public typealias Label = UILabel
 public typealias Button = UIButton
@@ -20,12 +20,12 @@ public typealias Slider = UISlider
 
 #elseif os(macOS)
 import AppKit
-public typealias Color = NSColor
-public typealias Font = NSFont
+public typealias PlatformColor = NSColor
+public typealias PlatformFont = NSFont
 
 public typealias Storyboard = NSStoryboard
 
-public typealias View = NSView
+public typealias PlatformView = NSView
 public typealias TextField = NSTextField
 public typealias Label = NSTextField
 public typealias Button = NSButton

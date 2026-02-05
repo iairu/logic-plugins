@@ -5,6 +5,16 @@ Abstract:
 Main AU interface that enables user to visually configure the frequency and resonance parameters.
 */
 
+import SwiftUI
+import CoreAudioKit
+import AIVFramework
+
+#if os(iOS)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
+
 public let defaultMinHertz: Float = 12.0
 public let defaultMaxHertz: Float = 20_000.0
 
@@ -33,18 +43,18 @@ extension CATransaction {
     }
 }
 
-extension Color {
-    var darker: Color {
+extension PlatformColor {
+    var darker: PlatformColor {
         var hue: CGFloat = 0
         var saturation: CGFloat = 0
         var brightness: CGFloat = 0
         var alpha: CGFloat = 0
         getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
-        return Color(hue: hue, saturation: saturation, brightness: brightness * 0.8, alpha: alpha)
+        return PlatformColor(hue: hue, saturation: saturation, brightness: brightness * 0.8, alpha: alpha)
     }
 }
 
-class FilterView: View {
+class FilterView: PlatformView {
 
     // MARK: Properties
 
@@ -79,10 +89,10 @@ class FilterView: View {
 
         #if os(iOS)
         // Red
-        let fillColor = Color(red: 0.848, green: 0.129, blue: 0.167, alpha: 1.000)
+        let fillColor = PlatformColor(red: 0.848, green: 0.129, blue: 0.167, alpha: 1.000)
         #elseif os(macOS)
         // Blue
-        let fillColor = Color(red: 0.067, green: 0.535, blue: 0.842, alpha: 1.000)
+        let fillColor = PlatformColor(red: 0.067, green: 0.535, blue: 0.842, alpha: 1.000)
         #endif
 
         shapeLayer.fillColor = fillColor.cgColor
@@ -320,9 +330,9 @@ class FilterView: View {
         rootLayer.masksToBounds = false
 
         graphLayer.name = "graph background"
-        graphLayer.borderColor = Color.darkGray.cgColor
+        graphLayer.borderColor = PlatformColor.darkGray.cgColor
         graphLayer.borderWidth = 1.0
-        graphLayer.backgroundColor = Color(white: 0.88, alpha: 1.0).cgColor
+        graphLayer.backgroundColor = PlatformColor(white: 0.88, alpha: 1.0).cgColor
         graphLayer.bounds = CGRect(x: 0, y: 0,
                                    width: rootLayer.frame.width - leftMargin,
                                    height: rootLayer.frame.height - bottomMargin)
@@ -349,11 +359,11 @@ class FilterView: View {
         #endif
     }
 
-    var graphLabelColor: Color {
+    var graphLabelPlatformColor: PlatformColor {
         #if os(iOS)
-        return Color(white: 0.1, alpha: 1.0)
+        return PlatformColor(white: 0.1, alpha: 1.0)
         #elseif os(macOS)
-        return Color.labelColor // Use Appearance-aware label color
+        return PlatformColor.labelColor // Use Appearance-aware label color
         #endif
     }
     
@@ -382,20 +392,20 @@ class FilterView: View {
             containerLayer.addSublayer(labelLayer)
 
             // Create Line Labels
-            let lineLayer = ColorLayer(white: index == 0 ? 0.65 : 0.8)
+            let lineLayer = PlatformColorLayer(white: index == 0 ? 0.65 : 0.8)
             dbLines.append(lineLayer)
             graphLayer.addSublayer(lineLayer)
         }
     }
 
-    class ColorLayer: CALayer {
+    class PlatformColorLayer: CALayer {
 
         init(white: CGFloat) {
             super.init()
-            backgroundColor = Color(white: white, alpha: 1.0).cgColor
+            backgroundColor = PlatformColor(white: white, alpha: 1.0).cgColor
         }
 
-        init(color: Color) {
+        init(color: PlatformColor) {
             super.init()
             backgroundColor = color.cgColor
         }
@@ -428,7 +438,7 @@ class FilterView: View {
                 labelLayer.string = "\(stringForValue(value)) Hz"
 
             case let i where i > 0 && i < gridLineCount:
-                let lineLayer = ColorLayer(white: 0.8)
+                let lineLayer = PlatformColorLayer(white: 0.8)
                 freqLines.append(lineLayer)
                 graphLayer.addSublayer(lineLayer)
 
@@ -452,10 +462,10 @@ class FilterView: View {
 
     func makeLabelLayer(alignment: CATextLayerAlignmentMode = .center) -> CATextLayer {
         let labelLayer = CATextLayer()
-        labelLayer.font = Font.systemFont(ofSize: 14).fontName as CFTypeRef
+        labelLayer.font = PlatformFont.systemFont(ofSize: 14).fontName as CFTypeRef
         labelLayer.fontSize = 14
         labelLayer.contentsScale = screenScale
-        labelLayer.foregroundColor = graphLabelColor.cgColor
+        labelLayer.foregroundColor = graphLabelPlatformColor.cgColor
         labelLayer.alignmentMode = alignment
         labelLayer.anchorPoint = .zero
         return labelLayer
@@ -467,22 +477,22 @@ class FilterView: View {
      */
     func createControlPoint() {
 
-        guard let color = touchDown ? tintColor : Color.darkGray else {
+        guard let color = touchDown ? tintColor : PlatformColor.darkGray else {
             // This should never happen.
             fatalError("Unable to get color value.")
         }
 
-        var lineLayer = ColorLayer(color: color)
+        var lineLayer = PlatformColorLayer(color: color)
         lineLayer.name = "x"
         controls.append(lineLayer)
         graphLayer.addSublayer(lineLayer)
 
-        lineLayer = ColorLayer(color: color)
+        lineLayer = PlatformColorLayer(color: color)
         lineLayer.name = "y"
         controls.append(lineLayer)
         graphLayer.addSublayer(lineLayer)
 
-        let circleLayer = ColorLayer(color: color)
+        let circleLayer = PlatformColorLayer(color: color)
         circleLayer.borderWidth = 2.0
         circleLayer.cornerRadius = 3.0
         circleLayer.name = "point"
@@ -497,7 +507,7 @@ class FilterView: View {
      is touching the graph and still down.
      */
     func updateControls(refreshColor: Bool) {
-        let color = touchDown ? tintColor.darker.cgColor: Color.darkGray.cgColor
+        let color = touchDown ? tintColor.darker.cgColor: PlatformColor.darkGray.cgColor
 
         // Turn off implicit animations for the control layers to avoid any control lag.
         CATransaction.noAnimation {
