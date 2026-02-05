@@ -50,8 +50,10 @@ public:
     for (auto &os : mOversampler)
       os.initialize();
 
+    updatePreamp();
     updateAutoLevel();
     updateGate();
+    updatePitch();
     updateDeesser();
     updateEQ();
     updateFilter();

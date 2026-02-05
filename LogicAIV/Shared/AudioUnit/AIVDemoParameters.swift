@@ -142,14 +142,16 @@ class AIVDemoParameters {
     var resonanceParam: AUParameter!
 
     let parameterTree: AUParameterTree
+    let kernelAdapter: AIVDSPKernelAdapter
 
     init(kernelAdapter: AIVDSPKernelAdapter) {
+        self.kernelAdapter = kernelAdapter
 
         // 1. Create Parameters
         
         // Global
         gainParam = AUParameterTree.createParameter(withIdentifier: "gain", name: "Gain", address: AIVParam.gain.rawValue, min: 0.0, max: 1.0, unit: .linearGain, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
-        gainParam.value = 0.5
+        gainParam.value = 1.0 // Unity Gain by default
         
         bypassParam = AUParameterTree.createParameter(withIdentifier: "bypass", name: "Bypass", address: AIVParam.bypass.rawValue, min: 0.0, max: 1.0, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
         bypassParam.value = 0.0
@@ -198,7 +200,7 @@ class AIVDemoParameters {
         // Compressor
         // Input Drive (FET Style): -48 to +12 dB
         compInputParam = AUParameterTree.createParameter(withIdentifier: "compInput", name: "Input", address: AIVParam.compInput.rawValue, min: -48.0, max: 12.0, unit: .decibels, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
-        compInputParam.value = -18.0
+        compInputParam.value = 0.0 // Default Unity (was -18.0 which attenuated signal)
         
         compRatioParam = AUParameterTree.createParameter(withIdentifier: "compRatio", name: "Ratio", address: AIVParam.compRatio.rawValue, min: 1.0, max: 20.0, unit: .ratio, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
         compRatioParam.value = 4.0 // Default 4:1
@@ -327,6 +329,14 @@ class AIVDemoParameters {
         parameterTree.implementorStringFromValueCallback = { param, value in
             let v = value?.pointee ?? param.value
             return String(format: "%.2f", v)
+        }
+        
+        syncParametersToKernel()
+    }
+    
+    private func syncParametersToKernel() {
+        for param in parameterTree.allParameters {
+            kernelAdapter.setParameter(param, value: param.value)
         }
     }
 }

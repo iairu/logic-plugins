@@ -136,3 +136,7 @@ de-esser "range" knob is still snapping back, limiter "ceiling" knob is still sn
 ---
 
 the AIV app demo sound works well with the entire vocal chain, however when i add AIV in Logic Pro it only lowers the sound and doesn't apply anything from the vocal chain regardless of how much i adjust it
+
+---
+
+problem persists: the AIV "Play" button sound works well with the entire vocal chain, no kernel nor DSP adjustments needed, BUT when i add AIVDemo inside Logic Pro the AIVDemo automatically lowers the sound and never applies any of the vocal chain effects, again APP IS OK - APP ALL EFFECT WORK EVEN APP BYPASS WORKS AND AU IS STILL BROKEN - AU ALL EFFECT NOT WORKING, AU HAS JUST MUSHED UP SOUND, AU BYPASS DOES NOTHING
