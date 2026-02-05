@@ -14,6 +14,9 @@ class AIVDemoParameters {
     private enum AIVParam: AUParameterAddress {
         case gain = 0
         case bypass = 1
+        case inputGain = 34
+        case saturation = 35
+        case phaseInvert = 36
         case pitchAmount = 2
         case pitchSpeed = 3
         case eqBand1Freq = 4
@@ -51,6 +54,11 @@ class AIVDemoParameters {
     // Parameters
     var gainParam: AUParameter!
     var bypassParam: AUParameter!
+    
+    // Preamp
+    var inputGainParam: AUParameter!
+    var saturationParam: AUParameter!
+    var phaseInvertParam: AUParameter!
     
     var pitchAmountParam: AUParameter!
     var pitchSpeedParam: AUParameter!
@@ -115,6 +123,16 @@ class AIVDemoParameters {
         
         bypassParam = AUParameterTree.createParameter(withIdentifier: "bypass", name: "Bypass", address: AIVParam.bypass.rawValue, min: 0.0, max: 1.0, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
         bypassParam.value = 0.0
+        
+        // Preamp
+        inputGainParam = AUParameterTree.createParameter(withIdentifier: "inputGain", name: "Input Gain", address: AIVParam.inputGain.rawValue, min: -100.0, max: 24.0, unit: .decibels, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        inputGainParam.value = 0.0
+        
+        saturationParam = AUParameterTree.createParameter(withIdentifier: "saturation", name: "Saturation", address: AIVParam.saturation.rawValue, min: 0.0, max: 100.0, unit: .percent, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        saturationParam.value = 0.0
+        
+        phaseInvertParam = AUParameterTree.createParameter(withIdentifier: "phaseInvert", name: "Phase Invert", address: AIVParam.phaseInvert.rawValue, min: 0.0, max: 1.0, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        phaseInvertParam.value = 0.0
         
         // Pitch
         pitchAmountParam = AUParameterTree.createParameter(withIdentifier: "pitchAmount", name: "Pitch Amount", address: AIVParam.pitchAmount.rawValue, min: 0.0, max: 100.0, unit: .percent, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
@@ -214,6 +232,7 @@ class AIVDemoParameters {
         // 2. Create Parameter Tree
         parameterTree = AUParameterTree.createTree(withChildren: [
             gainParam, bypassParam,
+            inputGainParam, saturationParam, phaseInvertParam,
             pitchAmountParam, pitchSpeedParam,
             eqBand1FreqParam, eqBand1GainParam, eqBand1QParam,
             eqBand2FreqParam, eqBand2GainParam, eqBand2QParam,

@@ -11,6 +11,10 @@
 #import <algorithm>
 #import <vector>
 
+#import <algorithm>
+#import <cmath>
+#import <vector>
+
 #import "AIVDSPClasses.hpp"
 #import "AIVDSPKernelAdapter.h"
 
@@ -60,6 +64,18 @@ public:
       break;
     case AIVParameterAddressBypass:
       mBypassed = (value > 0.5f);
+      break;
+
+    // Preamp
+    case AIVParameterAddressInputGain:
+      mInputGainDb = value;
+      updatePreamp();
+      break;
+    case AIVParameterAddressSaturation:
+      mSaturation = value;
+      break;
+    case AIVParameterAddressPhaseInvert:
+      mPhaseInvert = (value > 0.5f);
       break;
 
     // Auto Level
@@ -209,6 +225,13 @@ public:
     case AIVParameterAddressBypass:
       return (AUValue)(mBypassed ? 1.0f : 0.0f);
 
+    case AIVParameterAddressInputGain:
+      return mInputGainDb;
+    case AIVParameterAddressSaturation:
+      return mSaturation;
+    case AIVParameterAddressPhaseInvert:
+      return (AUValue)(mPhaseInvert ? 1.0f : 0.0f);
+
     case AIVParameterAddressAutoLevelTarget:
       return mAutoLevelTarget;
     case AIVParameterAddressAutoLevelRange:
@@ -315,10 +338,53 @@ public:
       for (UInt32 frameIndex = 0; frameIndex < frameCount; ++frameIndex) {
         float sample = in[frameIndex];
 
-        // 0. Auto Level
+        // 0. Preamp & Saturation (Step 1.1)
+        /*
+         Research Note (Section 2.1):
+         To model the "warmth" associated with transformer-based preamps, we
+         utilize a continuous, non-linear transfer function. A common mistake is
+         using hard clipping.
+
+         Correct Formula: Hyperbolic Tangent (Soft Saturation)
+         f(x) = tanh(k * x) / tanh(k)
+         Where k is the drive coefficient derived from the Input Gain. As x
+         increases, predominantly odd-order harmonics (3rd, 5th, 7th) are
+         generated.
+         */
+        float inputSample = sample;
+
+        // Research Note (Section 1.1):
+        // Correct Decibel Formula: 20 * log10(V / Vref)
+        // We convert the dB parameter to linear voltage ratio here.
+        float linearSample = inputSample * mInputGainLin;
+
+        // Physics: y = tanh(k * x) / tanh(k)
+        // k is derived from input gain.
+        // We use linearSample as 'x' logic for Drive, but use formula for
+        // Shape. Actually, if k=gain, then tanh(k * x_raw) / tanh(k) is the
+        // formula. Let's use the robust blend interpretation:
+
+        // Wet Path (Saturated/Limited)
+        // Protect against k=0 (though min gain is usually handled)
+        float k = (mInputGainLin < 0.01f) ? 0.01f : mInputGainLin;
+        float wetSample = std::tanh(k * inputSample) / std::tanh(k);
+
+        // Dry Path (Amplified Linear)
+        float drySample = linearSample;
+
+        // Mix: Saturation 0% = Dry (Amplified), 100% = Wet (Limited/Saturated)
+        float mix = mSaturation / 100.0f;
+        sample = (1.0f - mix) * drySample + mix * wetSample;
+
+        // Phase Invert
+        if (mPhaseInvert) {
+          sample = -sample;
+        }
+
+        // 1. Auto Level
         sample = mAutoLevel[channel].process(sample);
 
-        // 1. Pitch
+        // 2. Pitch
         sample = mPitch[channel].process(sample);
 
         // 2. Deesser
@@ -404,12 +470,21 @@ private:
       r.setParameters(mReverbSize, mReverbDamp, mReverbMix, mSampleRate);
   }
 
+  void updatePreamp() { mInputGainLin = std::pow(10.0f, mInputGainDb / 20.0f); }
+
   // MARK: Member Variables
   AUHostMusicalContextBlock mMusicalContextBlock;
 
   double mSampleRate = 44100.0;
   double mGain = 0.5;
   bool mBypassed = false;
+
+  // Preamp State
+  float mInputGainDb = 0.0f;
+  float mInputGainLin = 1.0f;
+  float mSaturation = 0.0f;
+  bool mPhaseInvert = false;
+
   AUAudioFrameCount mMaxFramesToRender = 1024;
   int mChannelCount = 2;
 

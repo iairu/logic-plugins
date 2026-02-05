@@ -7,6 +7,11 @@ class AudioUnitViewModel: ObservableObject {
     @Published var gain: Double = 0.5 { didSet { setParam(gainParam, gain) } }
     @Published var bypass: Double = 0.0 { didSet { setParam(bypassParam, bypass) } }
     
+    // Preamp
+    @Published var inputGain: Double = 0.0 { didSet { setParam(inputGainParam, inputGain) } }
+    @Published var saturation: Double = 0.0 { didSet { setParam(saturationParam, saturation) } }
+    @Published var phaseInvert: Double = 0.0 { didSet { setParam(phaseInvertParam, phaseInvert) } }
+    
     // Auto Level
     @Published var autoLevelTarget: Double = -10 { didSet { setParam(autoLevelTargetParam, autoLevelTarget) } }
     @Published var autoLevelRange: Double = 12 { didSet { setParam(autoLevelRangeParam, autoLevelRange) } }
@@ -57,6 +62,9 @@ class AudioUnitViewModel: ObservableObject {
     
     private var gainParam: AUParameter?
     private var bypassParam: AUParameter?
+    private var inputGainParam: AUParameter?
+    private var saturationParam: AUParameter?
+    private var phaseInvertParam: AUParameter?
     private var autoLevelTargetParam: AUParameter?
     private var autoLevelRangeParam: AUParameter?
     private var autoLevelSpeedParam: AUParameter?
@@ -103,6 +111,10 @@ class AudioUnitViewModel: ObservableObject {
         
         gainParam = bind("gain"); gain = Double(gainParam?.value ?? 0.5)
         bypassParam = bind("bypass"); bypass = Double(bypassParam?.value ?? 0)
+        
+        inputGainParam = bind("inputGain"); inputGain = Double(inputGainParam?.value ?? 0.0)
+        saturationParam = bind("saturation"); saturation = Double(saturationParam?.value ?? 0.0)
+        phaseInvertParam = bind("phaseInvert"); phaseInvert = Double(phaseInvertParam?.value ?? 0.0)
         
         autoLevelTargetParam = bind("autoLevelTarget"); autoLevelTarget = Double(autoLevelTargetParam?.value ?? -10)
         autoLevelRangeParam = bind("autoLevelRange"); autoLevelRange = Double(autoLevelRangeParam?.value ?? 12)
@@ -161,6 +173,10 @@ class AudioUnitViewModel: ObservableObject {
         // Map address back to property. This is tedious, so we check address.
         if address == gainParam?.address { gain = Double(value) }
         else if address == bypassParam?.address { bypass = Double(value) }
+        // Preamp
+        else if address == inputGainParam?.address { inputGain = Double(value) }
+        else if address == saturationParam?.address { saturation = Double(value) }
+        else if address == phaseInvertParam?.address { phaseInvert = Double(value) }
         // AutoLevel
         else if address == autoLevelTargetParam?.address { autoLevelTarget = Double(value) }
         else if address == autoLevelRangeParam?.address { autoLevelRange = Double(value) }
@@ -228,6 +244,23 @@ struct AIVMainView: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
+                        
+                        // Row 0: Preamp
+                        EffectGroup(title: "PREAMP") {
+                            HStack(spacing: 30) {
+                                ArcKnob(value: $viewModel.inputGain, range: -100...24, title: "INPUT", unit: "dB")
+                                ArcKnob(value: $viewModel.saturation, range: 0...100, title: "SATURATE", unit: "%")
+                                VStack {
+                                    Text("PHASE").font(.caption).foregroundColor(.gray)
+                                    Toggle("", isOn: Binding(get: { viewModel.phaseInvert > 0.5 }, set: { viewModel.phaseInvert = $0 ? 1 : 0 }))
+                                        .toggleStyle(SwitchToggleStyle(tint: .red))
+                                        .labelsHidden()
+                                    Text(viewModel.phaseInvert > 0.5 ? "INV" : "NARM")
+                                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                        .foregroundColor(viewModel.phaseInvert > 0.5 ? .red : .gray)
+                                }
+                            }
+                        }
                         
                         // Row 1: Auto Level & Pitch
                         HStack(alignment: .top, spacing: 20) {

@@ -50,7 +50,11 @@ typedef NS_ENUM(AUParameterAddress, AIVParameterAddress) {
   AIVParameterAddressDeesserRatio = 31,
 
   AIVParameterAddressCutoff = 32,
-  AIVParameterAddressResonance = 33
+  AIVParameterAddressResonance = 33,
+
+  AIVParameterAddressInputGain = 34,
+  AIVParameterAddressSaturation = 35,
+  AIVParameterAddressPhaseInvert = 36
 };
 
 @class AIVDemoViewController;
