@@ -113,4 +113,26 @@ for some reason instead of AIVMainView.swift being the main view it is actually 
 
 ---
 
-whenever i rotate any knobs on noise gate or de-esser or limiter it never adjusts to the new value and stays reset, when i try to return pitch back it doesn't do so, only forwarding pitch works but isnt normalised to original audio level, compressor default attack is 10 but knob only allows 0.0 to 1.0 rotation
+whenever i rotate any knobs on noise gate or de-esser or limiter it never adjusts to the new value and stays reset, when i try to return pitch back it doesn't do so, only forwarding pitch works but isnt normalised to original audio level, compressor default attack is 10 but knob only allows 0.0 to 1.0 rotation, resonance is missing from knobs (add it as additional knob)
+
+---
+
+still whenever i rotate any knobs on noise gate, de-esser, pitch speed, limiter or resonance it never adjusts to the my new value and stays in original position
+
+---
+
+still whenever i rotate any knobs on noise gate, de-esser, pitch speed, limiter or resonance it never adjusts to the my new value and stays in original position
+
+all of the problems persist due to issue with AIVMainView values not being updated, please fix this
+
+also adjusting mid gain in eq caused overflow and broke the sound, please fix this
+
+---
+
+noise gate now works well, same for de-esser threshold and frequency
+
+de-esser "range" knob is still snapping back, limiter "ceiling" knob is still snapping back also limiter "lookahead" knob is still snapping back, eq mid gain is doing better but at max 12dB still breaks the sound
+
+---
+
+the AIV app demo sound works well with the entire vocal chain, however when i add AIV in Logic Pro it only lowers the sound and doesn't apply anything from the vocal chain regardless of how much i adjust it

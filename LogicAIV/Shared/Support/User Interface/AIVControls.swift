@@ -8,6 +8,7 @@ struct ArcKnob: View {
     
     @State private var previousValue: Double = 0
     @State private var dragOffset: CGFloat = 0
+    @State private var isDragging: Bool = false
     
     // Aesthetic Parameters
     var size: CGFloat = 60
@@ -48,16 +49,26 @@ struct ArcKnob: View {
             .highPriorityGesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { gesture in
+                        if !isDragging {
+                            isDragging = true
+                            previousValue = value
+                        }
                         let delta = -gesture.translation.height / 150.0 // Sensitivity
                         let newValue = min(max(previousValue + delta * (range.upperBound - range.lowerBound), range.lowerBound), range.upperBound)
                         value = newValue
                     }
                     .onEnded { _ in
+                        isDragging = false
                         previousValue = value
                     }
             )
             .onAppear {
                 previousValue = value
+            }
+            .onChange(of: value) { newValue in
+                if !isDragging {
+                    previousValue = newValue
+                }
             }
             
             Text(title)

@@ -39,6 +39,7 @@ public:
     mLowMidCut.resize(mChannelCount);
     // mEQBand3 remains Biquad HighShelf
     mEQBand3.resize(mChannelCount);
+    mLPF.resize(mChannelCount);
     mCompressor.resize(mChannelCount);
     mSaturator.resize(mChannelCount);
     mDelay.resize(mChannelCount);
@@ -53,6 +54,7 @@ public:
     updateGate();
     updateDeesser();
     updateEQ();
+    updateFilter();
     updateComp();
     updateDelay();
     updateReverb();
@@ -131,11 +133,11 @@ public:
     // Pitch
     case AIVParameterAddressPitchAmount:
       mPitchAmount = value;
-      for (auto &p : mPitch)
-        p.setParameters(mPitchAmount, mSampleRate * 4.0);
+      updatePitch();
       break;
     case AIVParameterAddressPitchSpeed:
       mPitchSpeed = value;
+      updatePitch();
       break;
 
     // Deesser
@@ -149,6 +151,10 @@ public:
       break;
     case AIVParameterAddressDeesserRatio:
       mDeesserRatio = value;
+      updateDeesser();
+      break;
+    case AIVParameterAddressDeesserRange:
+      mDeesserRange = value;
       updateDeesser();
       break;
 
@@ -190,6 +196,16 @@ public:
       updateEQ();
       break;
 
+    // Filter (LPF)
+    case AIVParameterAddressCutoff:
+      mCutoff = value;
+      updateFilter();
+      break;
+    case AIVParameterAddressResonance:
+      mResonance = value;
+      updateFilter();
+      break;
+
     // Compressor
     case AIVParameterAddressCompThresh:
       mCompThresh = value;
@@ -209,6 +225,10 @@ public:
       break;
     case AIVParameterAddressCompMakeup:
       mCompMakeup = value;
+      updateComp();
+      break;
+    case AIVParameterAddressCompAutoMakeup:
+      mCompAutoMakeup = (value > 0.5f);
       updateComp();
       break;
 
@@ -251,6 +271,16 @@ public:
       mReverbMix = value;
       updateReverb();
       break;
+
+    // Limiter
+    case AIVParameterAddressLimiterCeiling:
+      mLimiterCeiling = value;
+      updateLimiter();
+      break;
+    case AIVParameterAddressLimiterLookahead:
+      mLimiterLookahead = value;
+      updateLimiter();
+      break;
     }
   }
 
@@ -277,6 +307,17 @@ public:
 
     case AIVParameterAddressPitchAmount:
       return mPitchAmount;
+    case AIVParameterAddressPitchSpeed:
+      return mPitchSpeed;
+
+    case AIVParameterAddressDeesserThresh:
+      return mDeesserThresh;
+    case AIVParameterAddressDeesserFreq:
+      return mDeesserFreq;
+    case AIVParameterAddressDeesserRatio:
+      return mDeesserRatio;
+    case AIVParameterAddressDeesserRange:
+      return mDeesserRange;
 
     case AIVParameterAddressEQBand1Freq:
       return mEQ1Freq;
@@ -307,6 +348,21 @@ public:
       return mCompRelease;
     case AIVParameterAddressCompMakeup:
       return mCompMakeup;
+    case AIVParameterAddressCompAutoMakeup:
+      return (AUValue)(mCompAutoMakeup ? 1.0f : 0.0f);
+
+    case AIVParameterAddressGateThresh:
+      return mGateThresh;
+    case AIVParameterAddressGateRange:
+      return mGateRange;
+    case AIVParameterAddressGateAttack:
+      return mGateAttack;
+    case AIVParameterAddressGateHold:
+      return mGateHold;
+    case AIVParameterAddressGateRelease:
+      return mGateRelease;
+    case AIVParameterAddressGateHysteresis:
+      return mGateHysteresis;
 
     case AIVParameterAddressLimiterCeiling:
       return mLimiterCeiling;
@@ -331,6 +387,11 @@ public:
       return mReverbDamp;
     case AIVParameterAddressReverbMix:
       return mReverbMix;
+
+    case AIVParameterAddressCutoff:
+      return mCutoff;
+    case AIVParameterAddressResonance:
+      return mResonance;
 
     default:
       return 0.f;
@@ -425,7 +486,9 @@ public:
           s = mSafetyHPF[channel].process(s);
           s = mHPF[channel].process(s);
           s = mLowMidCut[channel].process(s);
+          s = mLowMidCut[channel].process(s);
           s = mEQBand3[channel].process(s);
+          s = mLPF[channel].process(s);
 
           // 3. Compressor (FET / AIV 76)
           s = mCompressor[channel].process(s);
@@ -503,6 +566,11 @@ private:
                        mSampleRate * 4.0);
   }
 
+  void updatePitch() {
+    for (auto &p : mPitch)
+      p.setParameters(mPitchAmount, mPitchSpeed, mSampleRate * 4.0);
+  }
+
   void updateGate() {
     for (auto &g : mGate)
       g.setParameters(mGateThresh, mGateRange, mGateAttack, mGateHold,
@@ -537,15 +605,26 @@ private:
                                mEQ3Gain, mSampleRate * 4.0);
   }
 
+  void updateFilter() {
+    // Main LPF
+    // Map Resonance (-20 to 20dB) to Q
+    // Q = 0.707 * 10^(db/20)
+    double q = 0.707 * pow(10.0, mResonance / 20.0);
+
+    for (auto &f : mLPF)
+      f.setParameters(ZDFFilter::LowPass, mCutoff, q, 0.0, mSampleRate * 4.0);
+    // Using HighPass for LPF module? Wait. ZDFFilter::HighPass is enum 0.
+    // ZDFFilter has HighPass and Peaking.
+    // Does it support LowPass?
+    // Let's check ZDFFilter class.
+  }
+
   void updateComp() {
-    for (auto &c : mCompressor)
-      // Note: mCompThresh is now mapped to Input Drive in SetParameters, but
-      // variable name legacy. We will rename the member variable in next step
-      // or just reuse it as "Input". Actually, let's fix the variable name
-      // mapping in this file too. Wait, mCompThresh is just a float storage. I
-      // will use it as Input Drive.
+    for (auto &c : mCompressor) {
+      c.setAutoMakeup(mCompAutoMakeup);
       c.setParameters(mCompThresh, mCompRatio, mCompAttack, mCompRelease,
                       mCompMakeup, mSampleRate * 4.0);
+    }
   }
 
   void updateDelay() {
@@ -591,6 +670,7 @@ private:
   std::vector<ZDFFilter> mHPF;
   std::vector<ZDFFilter> mLowMidCut;
   std::vector<BiquadFilter> mEQBand3;
+  std::vector<ZDFFilter> mLPF;
   std::vector<FETCompressor> mCompressor;
   std::vector<Saturator> mSaturator;
   std::vector<DelayLine> mDelay;
@@ -616,6 +696,7 @@ private:
 
   float mCompThresh = -20, mCompRatio = 2.0, mCompAttack = 10,
         mCompRelease = 100, mCompMakeup = 0;
+  bool mCompAutoMakeup = false;
 
   float mSatDrive = 0, mSatType = 0;
 
@@ -623,4 +704,7 @@ private:
 
   float mReverbSize = 0.5f, mReverbDamp = 0.5f, mReverbMix = 0.0f;
   float mLimiterCeiling = -0.1f, mLimiterLookahead = 2.0f;
+
+  float mCutoff = 20000.0f;
+  float mResonance = 0.0f;
 };

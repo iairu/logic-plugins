@@ -204,8 +204,8 @@ class AIVDemoParameters {
         compRatioParam.value = 4.0 // Default 4:1
         
         // Attack: 20us to 800us (0.02ms to 0.8ms)
-        compAttackParam = AUParameterTree.createParameter(withIdentifier: "compAttack", name: "Attack", address: AIVParam.compAttack.rawValue, min: 0.02, max: 0.8, unit: .milliseconds, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
-        compAttackParam.value = 0.4
+        compAttackParam = AUParameterTree.createParameter(withIdentifier: "compAttack", name: "Attack", address: AIVParam.compAttack.rawValue, min: 0.1, max: 100.0, unit: .milliseconds, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        compAttackParam.value = 10.0
         
         // Release: 50ms to 1100ms
         compReleaseParam = AUParameterTree.createParameter(withIdentifier: "compRelease", name: "Release", address: AIVParam.compRelease.rawValue, min: 50.0, max: 1100.0, unit: .milliseconds, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)

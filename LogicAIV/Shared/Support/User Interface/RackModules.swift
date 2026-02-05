@@ -142,7 +142,7 @@ struct DynamicsPanel: View {
                         ArcKnob(value: $viewModel.compMakeup, range: 0...24, title: "Makeup", unit: "dB")
                     }
                     HStack(spacing: 15) {
-                        ArcKnob(value: $viewModel.compAttack, range: 0.02...1.0, title: "Attack", unit: "ms")
+                        ArcKnob(value: $viewModel.compAttack, range: 0.1...100.0, title: "Attack", unit: "ms")
                         ArcKnob(value: $viewModel.compRelease, range: 50...1000, title: "Release", unit: "ms")
                         
                         Toggle("Auto Mkup", isOn: $viewModel.compAutoMakeup)
@@ -196,18 +196,20 @@ struct OutputPanel: View {
     
     var body: some View {
          RackPanel(title: "Master") {
-             HStack(spacing: 30) {
-                 ArcKnob(value: $viewModel.gain, range: 0...1, title: "Output", unit: "", size: 80, trackWidth: 6)
-                 
-                 VStack {
-                     Text("BYPASS")
-                         .font(.system(size: 10, weight: .bold))
-                         .foregroundColor(.gray)
-                     Toggle("", isOn: Binding(get: { viewModel.bypass > 0.5 }, set: { viewModel.bypass = $0 ? 1 : 0 }))
-                         .toggleStyle(SwitchToggleStyle(tint: .red))
-                         .labelsHidden()
-                 }
-             }
+                HStack(spacing: 30) {
+                    ArcKnob(value: $viewModel.gain, range: 0...1, title: "Output", unit: "", size: 80, trackWidth: 6)
+                    
+                    VStack {
+                        Text("BYPASS")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.gray)
+                        Toggle("", isOn: Binding(get: { viewModel.bypass > 0.5 }, set: { viewModel.bypass = $0 ? 1 : 0 }))
+                            .toggleStyle(SwitchToggleStyle(tint: .red))
+                            .labelsHidden()
+                    }
+                    
+                    ArcKnob(value: $viewModel.resonance, range: -20...20, title: "Resonance", unit: "dB", size: 60)
+                }
          }
     }
 }

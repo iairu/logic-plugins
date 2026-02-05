@@ -17,7 +17,7 @@ const double kPi = 3.14159265358979323846;
 // --- ZDF Filter (TPT SVF) ---
 class ZDFFilter {
 public:
-  enum Type { HighPass, Peaking };
+  enum Type { HighPass, Peaking, LowPass };
 
   void setParameters(Type type, double freq, double Q, double gainDb,
                      double sampleRate) {
@@ -73,7 +73,7 @@ public:
 
     if (type == HighPass) {
       return (float)hp;
-    } else {
+    } else if (type == Peaking) {
       // Peaking: H = 1 + (A^2 - 1) * BP_normalized?
       // Or H = x + c * BP?
       // Standard constant-Q peaking TPT:
@@ -97,12 +97,15 @@ public:
           1.0; // A*A is linear power gain? A is sqrt. A*A is linear gain.
       // Just use raw linear gain
       double linearGain = A * A;
-
-      // Bandpass normalized to 0dB peak
-      double bpNorm = bp * 2.0 * R; // Peak is 1
+      // Normalize Bandpass to 0dB peak (Peak of raw BP is Q = 1/2R)
+      double bpNorm = bp * 2.0 * R;
 
       return (float)(input + (linearGain - 1.0) * bpNorm);
+    } else if (type == LowPass) {
+      return (float)lp;
     }
+
+    return input;
   }
 
   void reset() {
@@ -757,7 +760,7 @@ private:
 // --- Pitch Shifter (Granular) ---
 class PitchShifter {
 public:
-  void setParameters(double amount, double sampleRate) {
+  void setParameters(double amount, double speedPct, double sampleRate) {
     double semitones = (amount - 50.0) / 50.0 * 12.0;
     this->pitchRatio = pow(2.0, semitones / 12.0);
     this->sampleRate = sampleRate;
@@ -766,7 +769,16 @@ public:
     if (buffer.size() != bufSize) {
       buffer.resize(bufSize, 0);
     }
-    windowSize = (int)(sampleRate * 0.05); // 50ms
+
+    // Map speed (0-100) to window size (100ms - 10ms)
+    // Slower Speed = Larger Window (Smoother)
+    // Faster Speed = Smaller Window (Choppy/Fast)
+    // 0 -> 100ms, 100 -> 10ms
+    double targetMs = 100.0 - (speedPct * 0.9);
+    if (targetMs < 10.0)
+      targetMs = 10.0;
+
+    windowSize = (int)(sampleRate * targetMs / 1000.0);
     if (windowSize > bufSize)
       windowSize = bufSize;
   }
