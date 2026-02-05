@@ -38,6 +38,14 @@ class AIVDemoParameters {
         case reverbSize = 23
         case reverbDamp = 24
         case reverbMix = 25
+        case autoLevelTarget = 26
+        case autoLevelRange = 27
+        case autoLevelSpeed = 28
+        case deesserThresh = 29
+        case deesserFreq = 30
+        case deesserRatio = 31
+        case cutoff = 32
+        case resonance = 33
     }
 
     // Parameters
@@ -80,6 +88,20 @@ class AIVDemoParameters {
     var reverbSizeParam: AUParameter!
     var reverbDampParam: AUParameter!
     var reverbMixParam: AUParameter!
+
+    // Auto Level
+    var autoLevelTargetParam: AUParameter!
+    var autoLevelRangeParam: AUParameter!
+    var autoLevelSpeedParam: AUParameter!
+
+    // Deesser
+    var deesserThreshParam: AUParameter!
+    var deesserFreqParam: AUParameter!
+    var deesserRatioParam: AUParameter!
+
+    // Filter (Legacy)
+    var cutoffParam: AUParameter!
+    var resonanceParam: AUParameter!
 
     let parameterTree: AUParameterTree
 
@@ -160,6 +182,33 @@ class AIVDemoParameters {
         reverbDampParam.value = 50.0
         
         reverbMixParam = AUParameterTree.createParameter(withIdentifier: "reverbMix", name: "Mix", address: AIVParam.reverbMix.rawValue, min: 0.0, max: 100.0, unit: .percent, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+    
+        // Auto Level
+        autoLevelTargetParam = AUParameterTree.createParameter(withIdentifier: "autoLevelTarget", name: "Target Level", address: AIVParam.autoLevelTarget.rawValue, min: -60.0, max: 0.0, unit: .decibels, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        autoLevelTargetParam.value = -10.0
+
+        autoLevelRangeParam = AUParameterTree.createParameter(withIdentifier: "autoLevelRange", name: "Level Range", address: AIVParam.autoLevelRange.rawValue, min: 0.0, max: 40.0, unit: .decibels, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        autoLevelRangeParam.value = 12.0
+
+        autoLevelSpeedParam = AUParameterTree.createParameter(withIdentifier: "autoLevelSpeed", name: "Level Speed", address: AIVParam.autoLevelSpeed.rawValue, min: 0.0, max: 100.0, unit: .percent, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        autoLevelSpeedParam.value = 50.0
+
+        // Deesser
+        deesserThreshParam = AUParameterTree.createParameter(withIdentifier: "deesserThresh", name: "Deess Thresh", address: AIVParam.deesserThresh.rawValue, min: -60.0, max: 0.0, unit: .decibels, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        deesserThreshParam.value = -20.0
+
+        deesserFreqParam = AUParameterTree.createParameter(withIdentifier: "deesserFreq", name: "Deess Freq", address: AIVParam.deesserFreq.rawValue, min: 2000.0, max: 10000.0, unit: .hertz, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        deesserFreqParam.value = 5000.0
+
+        deesserRatioParam = AUParameterTree.createParameter(withIdentifier: "deesserRatio", name: "Deess Ratio", address: AIVParam.deesserRatio.rawValue, min: 1.0, max: 20.0, unit: .ratio, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        deesserRatioParam.value = 5.0
+
+        // Filter
+        cutoffParam = AUParameterTree.createParameter(withIdentifier: "cutoff", name: "Cutoff", address: AIVParam.cutoff.rawValue, min: 20.0, max: 20000.0, unit: .hertz, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        cutoffParam.value = 20000.0
+
+        resonanceParam = AUParameterTree.createParameter(withIdentifier: "resonance", name: "Resonance", address: AIVParam.resonance.rawValue, min: -20.0, max: 20.0, unit: .decibels, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        resonanceParam.value = 0.0
 
 
         // 2. Create Parameter Tree
@@ -172,7 +221,10 @@ class AIVDemoParameters {
             compThreshParam, compRatioParam, compAttackParam, compReleaseParam, compMakeupParam,
             satDriveParam, satTypeParam,
             delayTimeParam, delayFeedbackParam, delayMixParam,
-            reverbSizeParam, reverbDampParam, reverbMixParam
+            reverbSizeParam, reverbDampParam, reverbMixParam,
+            autoLevelTargetParam, autoLevelRangeParam, autoLevelSpeedParam,
+            deesserThreshParam, deesserFreqParam, deesserRatioParam,
+            cutoffParam, resonanceParam
         ])
 
         // 3. Connect to Kernel

@@ -39,7 +39,18 @@ typedef NS_ENUM(AUParameterAddress, AIVParameterAddress) {
 
   AIVParameterAddressReverbSize = 23,
   AIVParameterAddressReverbDamp = 24,
-  AIVParameterAddressReverbMix = 25
+  AIVParameterAddressReverbMix = 25,
+
+  AIVParameterAddressAutoLevelTarget = 26,
+  AIVParameterAddressAutoLevelRange = 27,
+  AIVParameterAddressAutoLevelSpeed = 28,
+
+  AIVParameterAddressDeesserThresh = 29,
+  AIVParameterAddressDeesserFreq = 30,
+  AIVParameterAddressDeesserRatio = 31,
+
+  AIVParameterAddressCutoff = 32,
+  AIVParameterAddressResonance = 33
 };
 
 @class AIVDemoViewController;

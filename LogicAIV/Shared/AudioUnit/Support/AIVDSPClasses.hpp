@@ -104,6 +104,103 @@ private:
   double x1 = 0, x2 = 0, y1 = 0, y2 = 0;
 };
 
+// --- Auto Level (AGC) ---
+class AutoLevel {
+public:
+  void setParameters(double targetDb, double rangeDb, double speed,
+                     double sampleRate) {
+    targetLevel = pow(10.0, targetDb / 20.0);
+    maxGain = pow(10.0, rangeDb / 20.0);
+    // Speed 0-100% maps to attack/release times
+    double attackMs = 1000.0 - (speed * 9.0); // 100ms to 1000ms
+    double releaseMs = attackMs * 2.0;
+
+    attackCoef = exp(-1.0 / (sampleRate * attackMs / 1000.0));
+    releaseCoef = exp(-1.0 / (sampleRate * releaseMs / 1000.0));
+  }
+
+  float process(float input) {
+    double absInput = fabs(input);
+
+    // Envelope follower
+    if (absInput > envelope)
+      envelope = attackCoef * (envelope - absInput) + absInput;
+    else
+      envelope = releaseCoef * (envelope - absInput) + absInput;
+
+    if (envelope < 0.0001)
+      return input;
+
+    // Calculate required gain to hit target
+    double currentDb = 20.0 * log10(envelope);
+    double targetDbVal = 20.0 * log10(targetLevel);
+    double gainDb = targetDbVal - currentDb;
+
+    // Clamp gain
+    if (gainDb > 20.0 * log10(maxGain))
+      gainDb = 20.0 * log10(maxGain);
+    if (gainDb < -20.0 * log10(maxGain))
+      gainDb = -20.0 * log10(maxGain);
+
+    double gain = pow(10.0, gainDb / 20.0);
+
+    return input * gain;
+  }
+
+private:
+  double targetLevel = 0.5;
+  double maxGain = 2.0;
+  double attackCoef = 0.0;
+  double releaseCoef = 0.0;
+  double envelope = 0.0;
+};
+
+// --- Deesser ---
+class Deesser {
+public:
+  void setParameters(double thresholdDb, double frequency, double ratio,
+                     double sampleRate) {
+    this->threshold = pow(10.0, thresholdDb / 20.0);
+    this->ratio = ratio;
+
+    // Setup sidechain HighPass filter
+    sidechainFilter.calculateCoefficients(BiquadFilter::HighPass, frequency,
+                                          0.707, 0.0, sampleRate);
+
+    // Fast attack, medium release for sibilance
+    attack = exp(-1.0 / (sampleRate * 2.0 / 1000.0));   // 2ms
+    release = exp(-1.0 / (sampleRate * 50.0 / 1000.0)); // 50ms
+  }
+
+  float process(float input) {
+    // Filter input for detection
+    float filtered = sidechainFilter.process(input);
+    double absInput = fabs(filtered);
+
+    // Envelope
+    if (absInput > envelope)
+      envelope = attack * (envelope - absInput) + absInput;
+    else
+      envelope = release * (envelope - absInput) + absInput;
+
+    // Gain reduction
+    double gain = 1.0;
+    if (envelope > threshold) {
+      gain = pow(envelope / threshold, 1.0 / ratio - 1.0);
+    }
+
+    return input * gain;
+  }
+
+private:
+  BiquadFilter sidechainFilter;
+  double threshold = 0.5;
+  double ratio = 5.0;
+  double envelope = 0.0;
+  double attack = 0.0;
+  double release = 0.0;
+};
+
 // --- Simple Compressor ---
 class SimpleCompressor {
 public:

@@ -26,7 +26,9 @@ public:
     mChannelCount = inputChannelCount;
 
     // Resize DSP modules for each channel
+    mAutoLevel.resize(mChannelCount);
     mPitch.resize(mChannelCount);
+    mDeesser.resize(mChannelCount);
     mEQBand1.resize(mChannelCount);
     mEQBand2.resize(mChannelCount);
     mEQBand3.resize(mChannelCount);
@@ -35,6 +37,8 @@ public:
     mDelay.resize(mChannelCount);
     mReverb.resize(mChannelCount);
 
+    updateAutoLevel();
+    updateDeesser();
     updateEQ();
     updateComp();
     updateDelay();
@@ -58,6 +62,20 @@ public:
       mBypassed = (value > 0.5f);
       break;
 
+    // Auto Level
+    case AIVParameterAddressAutoLevelTarget:
+      mAutoLevelTarget = value;
+      updateAutoLevel();
+      break;
+    case AIVParameterAddressAutoLevelRange:
+      mAutoLevelRange = value;
+      updateAutoLevel();
+      break;
+    case AIVParameterAddressAutoLevelSpeed:
+      mAutoLevelSpeed = value;
+      updateAutoLevel();
+      break;
+
     // Pitch
     case AIVParameterAddressPitchAmount:
       mPitchAmount = value;
@@ -66,6 +84,20 @@ public:
       break;
     case AIVParameterAddressPitchSpeed:
       mPitchSpeed = value;
+      break;
+
+    // Deesser
+    case AIVParameterAddressDeesserThresh:
+      mDeesserThresh = value;
+      updateDeesser();
+      break;
+    case AIVParameterAddressDeesserFreq:
+      mDeesserFreq = value;
+      updateDeesser();
+      break;
+    case AIVParameterAddressDeesserRatio:
+      mDeesserRatio = value;
+      updateDeesser();
       break;
 
     // EQ
@@ -177,6 +209,13 @@ public:
     case AIVParameterAddressBypass:
       return (AUValue)(mBypassed ? 1.0f : 0.0f);
 
+    case AIVParameterAddressAutoLevelTarget:
+      return mAutoLevelTarget;
+    case AIVParameterAddressAutoLevelRange:
+      return mAutoLevelRange;
+    case AIVParameterAddressAutoLevelSpeed:
+      return mAutoLevelSpeed;
+
     case AIVParameterAddressPitchAmount:
       return mPitchAmount;
 
@@ -276,10 +315,16 @@ public:
       for (UInt32 frameIndex = 0; frameIndex < frameCount; ++frameIndex) {
         float sample = in[frameIndex];
 
+        // 0. Auto Level
+        sample = mAutoLevel[channel].process(sample);
+
         // 1. Pitch
         sample = mPitch[channel].process(sample);
 
-        // 2. EQ
+        // 2. Deesser
+        sample = mDeesser[channel].process(sample);
+
+        // 3. EQ
         sample = mEQBand1[channel].process(sample);
         sample = mEQBand2[channel].process(sample);
         sample = mEQBand3[channel].process(sample);
@@ -319,6 +364,18 @@ public:
   }
 
 private:
+  void updateAutoLevel() {
+    for (auto &al : mAutoLevel)
+      al.setParameters(mAutoLevelTarget, mAutoLevelRange, mAutoLevelSpeed,
+                       mSampleRate);
+  }
+
+  void updateDeesser() {
+    for (auto &ds : mDeesser)
+      ds.setParameters(mDeesserThresh, mDeesserFreq, mDeesserRatio,
+                       mSampleRate);
+  }
+
   void updateEQ() {
     for (auto &eq : mEQBand1)
       eq.calculateCoefficients(BiquadFilter::LowPass, mEQ1Freq, mEQ1Q, mEQ1Gain,
@@ -358,6 +415,8 @@ private:
 
   // DSP Modules (Vector for multi-channel)
   std::vector<PitchShifter> mPitch;
+  std::vector<AutoLevel> mAutoLevel;
+  std::vector<Deesser> mDeesser;
   std::vector<BiquadFilter> mEQBand1, mEQBand2, mEQBand3;
   std::vector<SimpleCompressor> mCompressor;
   std::vector<Saturator> mSaturator;
@@ -367,6 +426,9 @@ private:
   // Parameter State Cache
   float mPitchAmount = 0;
   float mPitchSpeed = 20;
+
+  float mAutoLevelTarget = -10, mAutoLevelRange = 12, mAutoLevelSpeed = 50;
+  float mDeesserThresh = -20, mDeesserFreq = 5000, mDeesserRatio = 5;
 
   float mEQ1Freq = 100, mEQ1Gain = 0, mEQ1Q = 0.7;
   float mEQ2Freq = 1000, mEQ2Gain = 0, mEQ2Q = 0.7;

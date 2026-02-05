@@ -1,137 +1,6 @@
-/*
-See LICENSE folder for this sample’s licensing information.
-
-Abstract:
-View controller for the AIVDemo audio unit. Manages the interactions between a FilterView and the audio unit's parameters.
-*/
-
-import CoreAudioKit
 import SwiftUI
+import CoreAudioKit
 import AIVFramework
-#if os(iOS)
-import UIKit
-#elseif os(macOS)
-import AppKit
-#endif
-
-// MARK: - AIVControls
-
-struct ArcKnob: SwiftUI.View {
-    @Binding var value: Double
-    var range: ClosedRange<Double>
-    var title: String
-    var unit: String = ""
-    
-    @State private var dragOffset: CGFloat = 0
-    @State private var previousValue: Double = 0
-    
-    var normalizedValue: Double {
-        (value - range.lowerBound) / (range.upperBound - range.lowerBound)
-    }
-    
-    var body: some SwiftUI.View {
-        VStack(spacing: 8) {
-            ZStack {
-                // Background Track
-                Circle()
-                    .trim(from: 0.15, to: 0.85)
-                    .stroke(SwiftUI.Color.black.opacity(0.2), style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                    .rotationEffect(.degrees(90))
-                    .frame(width: 60, height: 60)
-                
-                // Value Track
-                Circle()
-                    .trim(from: 0.15, to: 0.15 + (0.7 * normalizedValue))
-                    .stroke(
-                        LinearGradient(gradient: Gradient(colors: [SwiftUI.Color.blue.opacity(0.8), SwiftUI.Color.cyan]), startPoint: .topLeading, endPoint: .bottomTrailing),
-                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
-                    )
-                    .rotationEffect(.degrees(90))
-                    .frame(width: 60, height: 60)
-                    .shadow(color: SwiftUI.Color.cyan.opacity(0.5), radius: 4, x: 0, y: 0)
-                
-                // Knob Handle logic
-                Circle()
-                    .fill(SwiftUI.Color.white.opacity(0.001)) // Invisible touch target
-                    .frame(width: 60, height: 60)
-                    .gesture(
-                        DragGesture(minimumDistance: 0)
-                            .onChanged { gesture in
-                                let dragChange = -gesture.translation.height / 50.0 // Increased sensitivity
-                                // Or use range-based: 
-                                // let rangeSpan = range.upperBound - range.lowerBound
-                                // let dragChange = (-gesture.translation.height / 200.0) * rangeSpan
-                                let newValue = min(max(previousValue + dragChange, range.lowerBound), range.upperBound)
-                                value = newValue
-                            }
-                            .onEnded { _ in
-                                previousValue = value
-                            }
-                    )
-                
-                Text(String(format: "%.1f%@", value, unit))
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
-                    .foregroundColor(SwiftUI.Color.white)
-            }
-            
-            Text(title)
-                .font(.caption)
-                .foregroundColor(SwiftUI.Color.gray)
-        }
-        .onAppear {
-            previousValue = value
-        }
-    }
-}
-
-struct ModernSlider: SwiftUI.View {
-    @Binding var value: Double
-    var range: ClosedRange<Double>
-    var title: String
-    
-    var body: some SwiftUI.View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(title)
-                    .font(.caption)
-                    .foregroundColor(SwiftUI.Color.gray)
-                Spacer()
-                Text(String(format: "%.1f", value))
-                    .font(.caption)
-                    .foregroundColor(SwiftUI.Color.white.opacity(0.8))
-            }
-            
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(SwiftUI.Color.black.opacity(0.2))
-                        .frame(height: 4)
-                        .cornerRadius(2)
-                    
-                    Rectangle()
-                        .fill(LinearGradient(gradient: Gradient(colors: [SwiftUI.Color.blue, SwiftUI.Color.cyan]), startPoint: .leading, endPoint: .trailing))
-                        .frame(width: geometry.size.width * CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound)), height: 4)
-                        .cornerRadius(2)
-                        .shadow(color: SwiftUI.Color.cyan.opacity(0.5), radius: 2)
-                }
-                .frame(maxHeight: .infinity, alignment: .center) // Center vertically in the 10pt height
-                .contentShape(Rectangle()) // Ensure entire area is hittable
-                .gesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { gesture in
-                            let width = geometry.size.width
-                            let dragX = gesture.location.x
-                            let normalized = min(max(dragX / width, 0), 1)
-                            value = range.lowerBound + (normalized * (range.upperBound - range.lowerBound))
-                        }
-                )
-            }
-            .frame(height: 10)
-        }
-    }
-}
-
-// MARK: - AIVMainView
 
 class AudioUnitViewModel: ObservableObject {
     // Global
@@ -186,14 +55,8 @@ class AudioUnitViewModel: ObservableObject {
     @Published var reverbDamp: Double = 50 { didSet { setParam(reverbDampParam, reverbDamp) } }
     @Published var reverbMix: Double = 0 { didSet { setParam(reverbMixParam, reverbMix) } }
     
-    // Filter
-    @Published var cutoff: Double = 20000 { didSet { setParam(cutoffParam, cutoff) } }
-    @Published var resonance: Double = 0 { didSet { setParam(resonanceParam, resonance) } }
-
     private var gainParam: AUParameter?
     private var bypassParam: AUParameter?
-    private var cutoffParam: AUParameter?
-    private var resonanceParam: AUParameter?
     private var autoLevelTargetParam: AUParameter?
     private var autoLevelRangeParam: AUParameter?
     private var autoLevelSpeedParam: AUParameter?
@@ -240,8 +103,6 @@ class AudioUnitViewModel: ObservableObject {
         
         gainParam = bind("gain"); gain = Double(gainParam?.value ?? 0.5)
         bypassParam = bind("bypass"); bypass = Double(bypassParam?.value ?? 0)
-        cutoffParam = bind("cutoff"); cutoff = Double(cutoffParam?.value ?? 20000)
-        resonanceParam = bind("resonance"); resonance = Double(resonanceParam?.value ?? 0)
         
         autoLevelTargetParam = bind("autoLevelTarget"); autoLevelTarget = Double(autoLevelTargetParam?.value ?? -10)
         autoLevelRangeParam = bind("autoLevelRange"); autoLevelRange = Double(autoLevelRangeParam?.value ?? 12)
@@ -300,8 +161,6 @@ class AudioUnitViewModel: ObservableObject {
         // Map address back to property. This is tedious, so we check address.
         if address == gainParam?.address { gain = Double(value) }
         else if address == bypassParam?.address { bypass = Double(value) }
-        else if address == cutoffParam?.address { cutoff = Double(value) }
-        else if address == resonanceParam?.address { resonance = Double(value) }
         // AutoLevel
         else if address == autoLevelTargetParam?.address { autoLevelTarget = Double(value) }
         else if address == autoLevelRangeParam?.address { autoLevelRange = Double(value) }
@@ -343,20 +202,20 @@ class AudioUnitViewModel: ObservableObject {
     }
 }
 
-struct AIVMainView: SwiftUI.View {
+struct AIVMainView: View {
     @StateObject var viewModel = AudioUnitViewModel()
     var audioUnit: AIVDemo?
     
-    var body: some SwiftUI.View {
+    var body: some View {
         ZStack {
-            SwiftUI.Color(red: 0.12, green: 0.12, blue: 0.14).edgesIgnoringSafeArea(.all)
+            Color(red: 0.12, green: 0.12, blue: 0.14).edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 0) {
                 // Header
                 HStack {
                     Text("AIV VOCAL CHAIN")
                         .font(.system(size: 18, weight: .bold, design: .serif))
-                        .foregroundColor(SwiftUI.Color.white)
+                        .foregroundColor(.white)
                         .tracking(2)
                     
                     Spacer()
@@ -365,7 +224,7 @@ struct AIVMainView: SwiftUI.View {
                         .toggleStyle(SwitchToggleStyle(tint: .cyan))
                 }
                 .padding()
-                .background(SwiftUI.Color(red: 0.15, green: 0.15, blue: 0.17))
+                .background(Color(red: 0.15, green: 0.15, blue: 0.17))
                 
                 ScrollView {
                     VStack(spacing: 24) {
@@ -421,18 +280,18 @@ struct AIVMainView: SwiftUI.View {
                         EffectGroup(title: "EQUALIZER") {
                             HStack(spacing: 30) {
                                 VStack {
-                                    Text("LOW").font(.caption).foregroundColor(SwiftUI.Color.gray)
+                                    Text("LOW").font(.caption).foregroundColor(.gray)
                                     ArcKnob(value: $viewModel.eq1Freq, range: 20...500, title: "FREQ", unit: "Hz")
                                     ArcKnob(value: $viewModel.eq1Gain, range: -20...20, title: "GAIN", unit: "dB")
                                 }
                                 VStack {
-                                    Text("MID").font(.caption).foregroundColor(SwiftUI.Color.gray)
+                                    Text("MID").font(.caption).foregroundColor(.gray)
                                     ArcKnob(value: $viewModel.eq2Freq, range: 200...5000, title: "FREQ", unit: "Hz")
                                     ArcKnob(value: $viewModel.eq2Gain, range: -20...20, title: "GAIN", unit: "dB")
                                     ArcKnob(value: $viewModel.eq2Q, range: 0.1...10, title: "Q")
                                 }
                                 VStack {
-                                    Text("HIGH").font(.caption).foregroundColor(SwiftUI.Color.gray)
+                                    Text("HIGH").font(.caption).foregroundColor(.gray)
                                     ArcKnob(value: $viewModel.eq3Freq, range: 2000...20000, title: "FREQ", unit: "Hz")
                                     ArcKnob(value: $viewModel.eq3Gain, range: -20...20, title: "GAIN", unit: "dB")
                                 }
@@ -471,20 +330,12 @@ struct AIVMainView: SwiftUI.View {
                             }
                         }
                         
-                        // Row 3.5: Filter (New)
-                        EffectGroup(title: "FILTER") {
-                            HStack(spacing: 30) {
-                                ArcKnob(value: $viewModel.cutoff, range: 20...20000, title: "CUTOFF", unit: "Hz")
-                                ArcKnob(value: $viewModel.resonance, range: -20...20, title: "RES", unit: "dB")
-                            }
-                        }
-
                         // Divider
-                        Rectangle().fill(SwiftUI.Color.gray.opacity(0.3)).frame(height: 1)
+                        Rectangle().fill(Color.gray.opacity(0.3)).frame(height: 1)
                         
                         // Global Output
                         HStack {
-                            Text("OUTPUT").font(.caption).foregroundColor(SwiftUI.Color.gray)
+                            Text("OUTPUT").font(.caption).foregroundColor(.gray)
                             ModernSlider(value: $viewModel.gain, range: 0...1, title: "MASTER GAIN")
                         }
                         .padding(.horizontal)
@@ -502,7 +353,7 @@ struct AIVMainView: SwiftUI.View {
     }
 }
 
-struct EffectGroup<Content: SwiftUI.View>: SwiftUI.View {
+struct EffectGroup<Content: View>: View {
     var title: String
     var content: Content
     
@@ -511,123 +362,23 @@ struct EffectGroup<Content: SwiftUI.View>: SwiftUI.View {
         self.content = content()
     }
     
-    var body: some SwiftUI.View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
                 .font(.system(size: 10, weight: .bold))
-                .foregroundColor(SwiftUI.Color.cyan)
+                .foregroundColor(.cyan)
                 .tracking(1)
             
             VStack {
                 content
             }
             .padding()
-            .background(SwiftUI.Color.black.opacity(0.3))
+            .background(Color.black.opacity(0.3))
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(SwiftUI.Color.white.opacity(0.1), lineWidth: 1)
+                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
             )
         }
-    }
-}
-
-// MARK: - View Controller
-
-public class AIVDemoViewController: AUViewController {
-
-    // MARK: - Compatibility Outlets (Required by Storyboard/XIB)
-    #if os(iOS)
-    @IBOutlet var compactView: UIView!
-    @IBOutlet var expandedView: UIView!
-    @IBOutlet var filterView: FilterView!
-    @IBOutlet var frequencyTextField: UITextField!
-    @IBOutlet var resonanceTextField: UITextField!
-    #elseif os(macOS)
-    @IBOutlet var compactView: NSView!
-    @IBOutlet var expandedView: NSView!
-    @IBOutlet var filterView: FilterView!
-    @IBOutlet var frequencyTextField: NSTextField!
-    @IBOutlet var resonanceTextField: NSTextField!
-    #endif
-
-    @IBAction func frequencyUpdated(_ sender: Any) {}
-    @IBAction func resonanceUpdated(_ sender: Any) {}
-
-
-    private var hostingController: Any? // Type erased to support both platforms if needed, or specific
-
-    public var audioUnit: AIVDemo? {
-        didSet {
-            performOnMain {
-                if self.isViewLoaded {
-                    self.updateHostingController()
-                }
-            }
-        }
-    }
-    
-    #if os(macOS)
-    public override init(nibName: NSNib.Name?, bundle: Bundle?) {
-        super.init(nibName: nibName, bundle: Bundle(for: type(of: self)))
-    }
-    #endif
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        #if os(iOS)
-        let host = UIHostingController(rootView: AIVMainView(audioUnit: audioUnit))
-        addChild(host)
-        view.addSubview(host.view)
-        host.view.frame = view.bounds
-        host.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        host.didMove(toParent: self)
-        hostingController = host
-        #elseif os(macOS)
-        let host = NSHostingController(rootView: AIVMainView(audioUnit: audioUnit))
-        addChild(host)
-        view.addSubview(host.view)
-        host.view.frame = view.bounds
-        host.view.autoresizingMask = [.width, .height]
-        hostingController = host
-        #endif
-    }
-    
-    private func updateHostingController() {
-        guard let au = audioUnit else { return }
-        
-        #if os(iOS)
-        if let host = hostingController as? UIHostingController<AIVMainView> {
-            host.rootView = AIVMainView(audioUnit: au)
-        }
-        #elseif os(macOS)
-        if let host = hostingController as? NSHostingController<AIVMainView> {
-            host.rootView = AIVMainView(audioUnit: au)
-        }
-        #endif
-    }
-
-    func performOnMain(_ operation: @escaping () -> Void) {
-        if Thread.isMainThread {
-            operation()
-        } else {
-            DispatchQueue.main.async {
-                operation()
-            }
-        }
-    }
-    
-    // MARK: - Compatibility
-    public func toggleViewConfiguration() {
-        // No-op for SwiftUI interface
-    }
-    
-    public func selectViewConfiguration(_ viewConfig: AUAudioUnitViewConfiguration) {
-        // No-op for SwiftUI interface
     }
 }
