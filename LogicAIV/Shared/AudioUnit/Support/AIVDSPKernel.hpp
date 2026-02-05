@@ -579,7 +579,7 @@ private:
   std::vector<FETCompressor> mCompressor;
   std::vector<Saturator> mSaturator;
   std::vector<DelayLine> mDelay;
-  std::vector<SchroederReverb> mReverb;
+  std::vector<FDNReverb> mReverb;
 
   // Parameter State Cache
   float mPitchAmount = 0;

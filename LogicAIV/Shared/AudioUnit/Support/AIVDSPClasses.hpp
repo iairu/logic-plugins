@@ -474,14 +474,22 @@ private:
   double envelope = 0.0;
 };
 
-// --- Delay Line ---
+// --- Delay Line (Lagrange Interpolation) ---
+// Research: 10.1 Delay Interpolation Physics
+// 4th-order Lagrange Interpolation prevents "zipper noise" and aliasing
+// during time modulation (tape echo effects).
 class DelayLine {
 public:
   void setParameters(double timeSec, double feedback, double mix,
                      double sampleRate) {
-    delaySamples = (int)(timeSec * sampleRate);
+    this->targetDelay = timeSec * sampleRate;
     this->feedback = feedback / 100.0;
     this->mix = mix / 100.0;
+
+    // Smooth delay time changes
+    if (currentDelay == 0)
+      currentDelay = targetDelay;
+
     if (buffer.size() != (int)(sampleRate * 2.0)) { // Max 2 sec buffer
       buffer.resize((int)(sampleRate * 2.0), 0);
     }
@@ -491,12 +499,70 @@ public:
     if (buffer.empty())
       return input;
 
-    int readIndex = writeIndex - delaySamples;
-    if (readIndex < 0)
-      readIndex += buffer.size();
+    // Smooth delay time (Simple LPF on the delay time itself)
+    currentDelay = 0.999 * currentDelay + 0.001 * targetDelay;
 
-    float delayed = buffer[readIndex];
+    // 4th-Order Lagrange Interpolation
+    // We need 4 points around the fractional delay.
+    // readPos = writeIndex - currentDelay
+    double readPos = writeIndex - currentDelay;
+    while (readPos < 0)
+      readPos += buffer.size();
+    while (readPos >= buffer.size())
+      readPos -= buffer.size();
+
+    int i = (int)readPos;
+    double frac = readPos - i;
+
+    // Indices for 4 points: i-1, i, i+1, i+2
+    // Optimizing relative to 'i' being the floor.
+    // Actually standard Lagrange 4-point usually takes y[n-1], y[n], y[n+1],
+    // y[n+2] relative to the fractional position? Let's treat 'frac' as delta
+    // from sample 'i'. We need indices: i-1, i, i+1, i+2
+
+    int i0 = i - 1;
+    int i1 = i;
+    int i2 = i + 1;
+    int i3 = i + 2;
+
+    // Wrap indices
+    if (i0 < 0)
+      i0 += buffer.size();
+    if (i1 >= buffer.size())
+      i1 -= buffer.size();
+    if (i2 >= buffer.size())
+      i2 -= buffer.size();
+    if (i3 >= buffer.size())
+      i3 -= buffer.size();
+
+    float y0 = buffer[i0];
+    float y1 = buffer[i1];
+    float y2 = buffer[i2];
+    float y3 = buffer[i3];
+
+    // Lagrange Coefficients (4th order / Cubic)
+    // d = frac (0..1)
+    // Common coefficients for cubic Lagrange:
+    // c0 = -d * (d-1) * (d-2) / 6
+    // c1 = (d+1) * (d-1) * (d-2) / 2
+    // c2 = -(d+1) * d * (d-2) / 2
+    // c3 = (d+1) * d * (d-1) / 6
+
+    double d = frac;
+    double c0 = -d * (d - 1.0) * (d - 2.0) / 6.0;
+    double c1 = (d + 1.0) * (d - 1.0) * (d - 2.0) / 2.0;
+    double c2 = -(d + 1.0) * d * (d - 2.0) / 2.0;
+    double c3 = (d + 1.0) * d * (d - 1.0) / 6.0;
+
+    float delayed = (float)(c0 * y0 + c1 * y1 + c2 * y2 + c3 * y3);
+
     float nextInput = input + delayed * feedback;
+
+    // Soft Clip Feedback to prevent explosion
+    if (nextInput > 2.0f)
+      nextInput = 2.0f;
+    if (nextInput < -2.0f)
+      nextInput = -2.0f;
 
     buffer[writeIndex] = nextInput;
     writeIndex++;
@@ -509,7 +575,8 @@ public:
 private:
   std::vector<float> buffer;
   int writeIndex = 0;
-  int delaySamples = 0;
+  double targetDelay = 0;
+  double currentDelay = 0;
   double feedback = 0, mix = 0;
 };
 
@@ -616,76 +683,181 @@ private:
   double sampleRate = 44100;
 };
 
-// --- Schroeder Reverb ---
-class SchroederReverb {
+// --- FDN Reverb (8x8 Hadamard) ---
+// Research: 10.2 Feedback Delay Networks (FDN)
+// Uses an 8x8 Hadamard Matrix for maximum diffusion and unitary energy
+// preservation. Prime number delay lengths prevent resonant modes.
+class FDNReverb {
 public:
-  SchroederReverb() {
-    // Tunings for 44.1kHz
-    int cD[] = {1557, 1617, 1491, 1422};
-    combDelays.assign(cD, cD + 4);
+  FDNReverb() {
+    // Prime number delays for 44.1kHz (approx 25ms to 90ms)
+    // Scaled by size parameter later.
+    baseDelays = {1117, 1361, 1613, 1933, 2273, 2663, 3167, 3943};
 
-    int aD[] = {225, 556};
-    allpassDelays.assign(aD, aD + 2);
+    delayLines.resize(8);
+    // Buffer size generous enough for modulation
+    for (int i = 0; i < 8; i++) {
+      delayLines[i].resize(8192, 0); // ~180ms max
+    }
 
-    combs.resize(4);
-    for (int i = 0; i < 4; i++)
-      combs[i].resize(2000, 0);
+    // Feedback buffer
+    feedbackBuffer.resize(8, 0.0f);
+    outputs.resize(8, 0.0f);
 
-    allpasses.resize(2);
-    for (int i = 0; i < 2; i++)
-      allpasses[i].resize(1000, 0);
+    // LowPass states for damping
+    lpStates.resize(8, 0.0f);
   }
 
   void setParameters(double size, double damp, double mix, double sampleRate) {
-    this->feedback = 0.7 + (damp * 0.28);
     this->mix = mix / 100.0;
+
+    // Size scales the delay lines
+    // size 0-100. 50 is nominal.
+    double sizeFactor = 0.5 + (size / 100.0); // 0.5x to 1.5x
+
+    for (int i = 0; i < 8; i++) {
+      currentDelays[i] = (int)(baseDelays[i] * sizeFactor);
+      // Safety clamp
+      if (currentDelays[i] >= 8192)
+        currentDelays[i] = 8191;
+    }
+
+    // Damping (LowPass in feedback)
+    // Damp 0-100 -> Cutoff freq high to low
+    // simple one-pole coef: y = x + coef * (last_y - x) -> y = x(1-c) + last*c
+    // ? Or y = y + c * (x - y) Higher damp = lower cutoff = higher coef (if
+    // coef 0 is no filtering) 0 -> 0.0 (open) 100 -> 0.4 (quite muffled loops)
+    this->dampCoef = damp / 250.0;
+
+    // RT60 roughly controlled by feedback gain
+    // T60 = -3 * Delay / log(gain)
+    // We want long tails. Gain close to 1.0.
+    // Let's map size/decay to feedback gain.
+    // We'll use a fixed high gain for the "matrix" and attenuation via
+    // damp/decay. Actually usually there is a decay param. Let's assume 'size'
+    // acts as decay time in this simplified model, or we add a decay param if
+    // needed. Prompt says "Reverb Decay" is a param. Oh wait, setParameters has
+    // size, damp, mix. Check AIVDSPKernel.hpp calls. It passes reverbSize,
+    // reverbDamp, reverbMix. Wait, prompt 10.3 says Reverb Decay (RT60) is a
+    // param. But AIVDSPKernelAdapter enum has ReverbSize, ReverbDamp,
+    // ReverbMix. I will use 'size' to derive feedback gain to approximate
+    // decay.
+
+    // Map size (0-100) to feedback (0.8 to 0.99)
+    this->feedbackGain = 0.80 + (size / 100.0) * 0.19;
   }
 
   float process(float input) {
-    float out = 0.0f;
+    // 1. Input into all delay lines
+    // 2. Read from delay lines
+    // 3. Hadamard Mix
+    // 4. Feedback with Damping
 
-    // Parallel Combs
+    float outSum = 0.0f;
+
+    for (int i = 0; i < 8; i++) {
+      // Read ptr
+      int readIdx = indices[i] - currentDelays[i];
+      if (readIdx < 0)
+        readIdx += delayLines[i].size();
+
+      float delayed = delayLines[i][readIdx];
+      outputs[i] = delayed;
+      outSum += delayed;
+    }
+
+    // Hadamard Matrix 8x8 Fast Transform
+    // Recursive structure:
+    // H1 = [1]
+    // H2 = [1 1; 1 -1]
+    // ...
+    // Standard unnormalized Hadamard creates gain of sqrt(8). We must normalize
+    // by 1/sqrt(8).
+
+    // Copy outputs to temp for matrix op
+    float h[8];
+    for (int i = 0; i < 8; i++)
+      h[i] = outputs[i];
+
+    // Fast Walsh-Hadamard Transform logic for 8 elements
+    // Stage 1
+    // 0+1, 0-1, 2+3, 2-3...
+    float s1[8];
+    for (int i = 0; i < 8; i += 2) {
+      s1[i] = h[i] + h[i + 1];
+      s1[i + 1] = h[i] - h[i + 1];
+    }
+
+    // Stage 2
+    // 0+2, 1+3, 0-2, 1-3... (group 4)
+    // Actually standard butterfly:
+    // For size 4:
+    // S2[0] = S1[0] + S1[2]
+    // S2[1] = S1[1] + S1[3]
+    // S2[2] = S1[0] - S1[2]
+    // S2[3] = S1[1] - S1[3]
+    // Same for 4-7
+    float s2[8];
+    for (int offset = 0; offset < 8; offset += 4) {
+      s2[offset + 0] = s1[offset + 0] + s1[offset + 2];
+      s2[offset + 1] = s1[offset + 1] + s1[offset + 3];
+      s2[offset + 2] = s1[offset + 0] - s1[offset + 2];
+      s2[offset + 3] = s1[offset + 1] - s1[offset + 3];
+    }
+
+    // Stage 3 (Final for 8)
+    float s3[8]; // Result
     for (int i = 0; i < 4; i++) {
-      int idx = combIndices[i];
-      float delayed = combs[i][idx];
-      float val = delayed * feedback;
-      float combOut = delayed;
-      combs[i][idx] = input + val;
-
-      combIndices[i]++;
-      if (combIndices[i] >= combDelays[i])
-        combIndices[i] = 0;
-
-      out += combOut;
+      s3[i] = s2[i] + s2[i + 4];
+      s3[i + 4] = s2[i] - s2[i + 4];
     }
 
-    // Series Allpasses
-    for (int i = 0; i < 2; i++) {
-      int idx = allpassIndices[i];
-      float delayed = allpasses[i][idx];
-      float g = 0.5f;
-      float buf = out + g * delayed;
-      float apOut = delayed - g * buf;
-      allpasses[i][idx] = buf;
-      allpassIndices[i]++;
-      if (allpassIndices[i] >= allpassDelays[i])
-        allpassIndices[i] = 0;
+    // Normalize (1/sqrt(8) approx 0.3535)
+    float norm = 0.35355f;
 
-      out = apOut;
+    // Feedback Loop
+    for (int i = 0; i < 8; i++) {
+      float mixed = s3[i] * norm;
+
+      // Damping (One-pole LowPass)
+      // y[n] = x[n] * (1-d) + y[n-1] * d
+      lpStates[i] = mixed * (1.0 - dampCoef) + lpStates[i] * dampCoef;
+      float damped = lpStates[i];
+
+      // Sum Input + Feedback
+      // Input injected into all lines (or specific ones?)
+      // Standard FDN: Input + Feedback -> Delay
+      float next = input + damped * feedbackGain;
+
+      // Soft clip safety
+      if (next > 2.0f)
+        next = 2.0f;
+      else if (next < -2.0f)
+        next = -2.0f;
+
+      // Write
+      delayLines[i][indices[i]] = next;
+
+      // Advance ptr
+      indices[i]++;
+      if (indices[i] >= delayLines[i].size())
+        indices[i] = 0;
     }
 
-    return input * (1.0f - mix) + out * mix;
+    return input * (1.0f - mix) + outSum * 0.125f * mix; // Normalize sum output
   }
 
 private:
-  std::vector<std::vector<float>> combs;
-  std::vector<int> combDelays;
-  int combIndices[4] = {0};
+  std::vector<int> baseDelays;
+  int currentDelays[8] = {0};
+  std::vector<std::vector<float>> delayLines;
+  std::vector<int> indices = std::vector<int>(8, 0);
 
-  std::vector<std::vector<float>> allpasses;
-  std::vector<int> allpassDelays;
-  int allpassIndices[2] = {0};
+  std::vector<float> feedbackBuffer;
+  std::vector<float> outputs;
+  std::vector<float> lpStates;
 
-  float feedback = 0.8f;
-  float mix = 0.5f;
+  float feedbackGain = 0.5f;
+  float dampCoef = 0.0f;
+  float mix = 0.0f;
 };
