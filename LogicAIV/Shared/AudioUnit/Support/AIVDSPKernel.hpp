@@ -46,6 +46,7 @@ public:
     mReverb.resize(mChannelCount);
     mOversampler.resize(mChannelCount);
     mLimiter.resize(mChannelCount);
+    mNormalizer.resize(mChannelCount); // Add Normalizer
 
     for (auto &os : mOversampler)
       os.initialize();
@@ -498,6 +499,41 @@ public:
       float *in = inputBuffers[channel];
       float *out = outputBuffers[channel];
 
+      // --- CROSSNORMALIZER LOGIC ---
+      // 1. Analyze Input (Tap A)
+      // Pass the raw input buffer for analysis.
+      // Gate Status: Needed for AutoLevel link.
+      float internalGateState = mGate[channel].isOpen() ? 1.0f : 0.0f;
+      // Comp GR: potentially needed, currently unused by implementation.
+
+      mNormalizer[channel].processLogic(in, frameCount, internalGateState,
+                                        0.0f);
+
+      // 2. Retrieve & Apply Controls
+      float autoGainDB = mNormalizer[channel].getAutoLevelGain();
+      float compThreshAdj = mNormalizer[channel].getCompThresholdAdjust();
+      float mudCut = mNormalizer[channel].getMudEqCut();
+      float satScaler = mNormalizer[channel].getSatDriveScaler();
+
+      // Update Modules
+      mAutoLevel[channel].setGainOffset(autoGainDB);
+      mCompressor[channel].setThresholdOffset(compThreshAdj);
+      mSaturator[channel].setDriveScale(satScaler);
+
+      // Dynamic EQ (Mud Cut on Band 2)
+      // We need to re-calculate coefficients if they change.
+      // Checking for change would be efficient, but for now we bluntly set.
+      // Note: Recalculating Biquad coeffs per block is cheap enough over 1000
+      // blocks/sec. We assume mEQ2Gain is the *Base* gain. We add cut. Wait,
+      // mLowMidCut is vector of Biquad. We need to access mLowMidCut[channel]
+      // and set its params. But unlike others, Biquad doesn't store base
+      // params. We have mEQ2Freq, mEQ2Q, mEQ2Gain stored in members.
+      double currentQ = std::max(0.1f, std::min(mEQ2Q, 10.0f));
+      double dynamicGain = mEQ2Gain + mudCut;
+      mLowMidCut[channel].calculateCoefficients(BiquadFilter::Peaking, mEQ2Freq,
+                                                currentQ, dynamicGain,
+                                                mSampleRate * 4.0);
+
       for (UInt32 frameIndex = 0; frameIndex < frameCount; ++frameIndex) {
         float sample = in[frameIndex];
 
@@ -517,6 +553,15 @@ public:
            Ideally Preamp saturation benefits most from OS.
            */
           float inputSample = s;
+
+          // --- SAFETY PAD (CrossNormalizer) ---
+          // Pre-attenuate signals > -3dBFS to roughly -6dBFS before saturator
+          // This is a dynamic input pad.
+          // Note: In strict implementation, this should be smoothed.
+          // The Normalizer's getter returns a smoothed value.
+          float safetyPad = mNormalizer[channel].getSafetyPad();
+          inputSample *= safetyPad;
+
           float linearSample = inputSample * mInputGainLin;
 
           float k_val = (mInputGainLin < 0.01f) ? 0.01f : mInputGainLin;
@@ -749,6 +794,7 @@ private:
   std::vector<DelayLine> mDelay;
   std::vector<FDNReverb> mReverb;
   std::vector<Oversampler> mOversampler;
+  std::vector<CrossNormalizer> mNormalizer;
   std::vector<TruePeakLimiter> mLimiter;
 
   // Parameter State Cache
