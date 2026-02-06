@@ -68,7 +68,18 @@ typedef NS_ENUM(AUParameterAddress, AIVParameterAddress) {
   // Safety Features
   AIVParameterAddressLimiterCeiling = 60,
   AIVParameterAddressLimiterLookahead = 61,
-  AIVParameterAddressCompAutoMakeup = 62
+  AIVParameterAddressCompAutoMakeup = 62,
+
+  // Module Enables
+  AIVParameterAddressGateEnable = 70,
+  AIVParameterAddressDeesserEnable = 71,
+  AIVParameterAddressEQEnable = 72,
+  AIVParameterAddressCompEnable = 73,
+  AIVParameterAddressSatEnable = 74,
+  AIVParameterAddressDelayEnable = 75,
+  AIVParameterAddressReverbEnable = 76,
+  AIVParameterAddressPitchEnable = 77,
+  AIVParameterAddressLimiterEnable = 78
 };
 
 @class AIVDemoViewController;

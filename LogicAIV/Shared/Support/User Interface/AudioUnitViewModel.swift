@@ -7,6 +7,17 @@ public class AudioUnitViewModel: ObservableObject {
     @Published var gain: Double = 0.5 { didSet { setParam(gainParam, gain) } }
     @Published var bypass: Double = 0.0 { didSet { setParam(bypassParam, bypass) } }
     
+    // Enables
+    @Published var gateEnable: Bool = false { didSet { setParam(gateEnableParam, gateEnable ? 1.0 : 0.0) } }
+    @Published var deesserEnable: Bool = false { didSet { setParam(deesserEnableParam, deesserEnable ? 1.0 : 0.0) } }
+    @Published var eqEnable: Bool = false { didSet { setParam(eqEnableParam, eqEnable ? 1.0 : 0.0) } }
+    @Published var compEnable: Bool = false { didSet { setParam(compEnableParam, compEnable ? 1.0 : 0.0) } }
+    @Published var satEnable: Bool = false { didSet { setParam(satEnableParam, satEnable ? 1.0 : 0.0) } }
+    @Published var delayEnable: Bool = false { didSet { setParam(delayEnableParam, delayEnable ? 1.0 : 0.0) } }
+    @Published var reverbEnable: Bool = false { didSet { setParam(reverbEnableParam, reverbEnable ? 1.0 : 0.0) } }
+    @Published var pitchEnable: Bool = false { didSet { setParam(pitchEnableParam, pitchEnable ? 1.0 : 0.0) } }
+    @Published var limiterEnable: Bool = false { didSet { setParam(limiterEnableParam, limiterEnable ? 1.0 : 0.0) } }
+    
     // Auto Level
     @Published var autoLevelTarget: Double = -10 { didSet { setParam(autoLevelTargetParam, autoLevelTarget) } }
     @Published var autoLevelRange: Double = 12 { didSet { setParam(autoLevelRangeParam, autoLevelRange) } }
@@ -127,10 +138,26 @@ public class AudioUnitViewModel: ObservableObject {
     private var saturationParam: AUParameter?
     private var phaseInvertParam: AUParameter?
     
+    // Enable Params
+    private var gateEnableParam: AUParameter?
+    private var deesserEnableParam: AUParameter?
+    private var eqEnableParam: AUParameter?
+    private var compEnableParam: AUParameter?
+    private var satEnableParam: AUParameter?
+    private var delayEnableParam: AUParameter?
+    private var reverbEnableParam: AUParameter?
+    private var pitchEnableParam: AUParameter?
+    private var limiterEnableParam: AUParameter?
+    
     private var observerToken: AUParameterObserverToken?
     private var paramTree: AUParameterTree?
     
     func connect(audioUnit: AIVDemo) {
+        // Cleanup old observer if re-connecting
+        if let token = observerToken, let tree = paramTree {
+            tree.removeParameterObserver(token)
+        }
+        
         guard let tree = audioUnit.parameterTree else { return }
         self.paramTree = tree
         
@@ -200,6 +227,16 @@ public class AudioUnitViewModel: ObservableObject {
         reverbSizeParam = bind("reverbSize"); reverbSize = Double(reverbSizeParam?.value ?? 50)
         reverbDampParam = bind("reverbDamp"); reverbDamp = Double(reverbDampParam?.value ?? 50)
         reverbMixParam = bind("reverbMix"); reverbMix = Double(reverbMixParam?.value ?? 0)
+        
+        gateEnableParam = bind("gateEnable"); gateEnable = (gateEnableParam?.value ?? 0) > 0.5
+        deesserEnableParam = bind("deesserEnable"); deesserEnable = (deesserEnableParam?.value ?? 0) > 0.5
+        eqEnableParam = bind("eqEnable"); eqEnable = (eqEnableParam?.value ?? 0) > 0.5
+        compEnableParam = bind("compEnable"); compEnable = (compEnableParam?.value ?? 0) > 0.5
+        satEnableParam = bind("satEnable"); satEnable = (satEnableParam?.value ?? 0) > 0.5
+        delayEnableParam = bind("delayEnable"); delayEnable = (delayEnableParam?.value ?? 0) > 0.5
+        reverbEnableParam = bind("reverbEnable"); reverbEnable = (reverbEnableParam?.value ?? 0) > 0.5
+        pitchEnableParam = bind("pitchEnable"); pitchEnable = (pitchEnableParam?.value ?? 0) > 0.5
+        limiterEnableParam = bind("limiterEnable"); limiterEnable = (limiterEnableParam?.value ?? 0) > 0.5
         
         observerToken = tree.token(byAddingParameterObserver: { [weak self] address, value in
             DispatchQueue.main.async {
@@ -272,5 +309,16 @@ public class AudioUnitViewModel: ObservableObject {
         else if address == reverbSizeParam?.address { reverbSize = Double(value) }
         else if address == reverbDampParam?.address { reverbDamp = Double(value) }
         else if address == reverbMixParam?.address { reverbMix = Double(value) }
+        
+        // Enables
+        else if address == gateEnableParam?.address { gateEnable = (value > 0.5) }
+        else if address == deesserEnableParam?.address { deesserEnable = (value > 0.5) }
+        else if address == eqEnableParam?.address { eqEnable = (value > 0.5) }
+        else if address == compEnableParam?.address { compEnable = (value > 0.5) }
+        else if address == satEnableParam?.address { satEnable = (value > 0.5) }
+        else if address == delayEnableParam?.address { delayEnable = (value > 0.5) }
+        else if address == reverbEnableParam?.address { reverbEnable = (value > 0.5) }
+        else if address == pitchEnableParam?.address { pitchEnable = (value > 0.5) }
+        else if address == limiterEnableParam?.address { limiterEnable = (value > 0.5) }
     }
 }

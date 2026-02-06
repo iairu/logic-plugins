@@ -63,6 +63,17 @@ class AIVDemoParameters {
         case limiterCeiling = 60
         case limiterLookahead = 61
         case compAutoMakeup = 62
+        
+        // Enables
+        case gateEnable = 70
+        case deesserEnable = 71
+        case eqEnable = 72
+        case compEnable = 73
+        case satEnable = 74
+        case delayEnable = 75
+        case reverbEnable = 76
+        case pitchEnable = 77
+        case limiterEnable = 78
     }
 
     // Parameters
@@ -140,6 +151,17 @@ class AIVDemoParameters {
     // Filter (Legacy)
     var cutoffParam: AUParameter!
     var resonanceParam: AUParameter!
+    
+    // Enables
+    var gateEnableParam: AUParameter!
+    var deesserEnableParam: AUParameter!
+    var eqEnableParam: AUParameter!
+    var compEnableParam: AUParameter!
+    var satEnableParam: AUParameter!
+    var delayEnableParam: AUParameter!
+    var reverbEnableParam: AUParameter!
+    var pitchEnableParam: AUParameter!
+    var limiterEnableParam: AUParameter!
 
     let parameterTree: AUParameterTree
     let kernelAdapter: AIVDSPKernelAdapter
@@ -294,7 +316,35 @@ class AIVDemoParameters {
         cutoffParam.value = 20000.0
 
         resonanceParam = AUParameterTree.createParameter(withIdentifier: "resonance", name: "Resonance", address: AIVParam.resonance.rawValue, min: -20.0, max: 20.0, unit: .decibels, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
-        resonanceParam.value = 0.0
+    resonanceParam.value = 0.0
+        
+        // Enables (Default OFF)
+        gateEnableParam = AUParameterTree.createParameter(withIdentifier: "gateEnable", name: "Gate Enable", address: AIVParam.gateEnable.rawValue, min: 0, max: 1, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        gateEnableParam.value = 0.0
+        
+        deesserEnableParam = AUParameterTree.createParameter(withIdentifier: "deesserEnable", name: "Deesser Enable", address: AIVParam.deesserEnable.rawValue, min: 0, max: 1, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        deesserEnableParam.value = 0.0
+        
+        eqEnableParam = AUParameterTree.createParameter(withIdentifier: "eqEnable", name: "EQ Enable", address: AIVParam.eqEnable.rawValue, min: 0, max: 1, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        eqEnableParam.value = 0.0
+        
+        compEnableParam = AUParameterTree.createParameter(withIdentifier: "compEnable", name: "Comp Enable", address: AIVParam.compEnable.rawValue, min: 0, max: 1, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        compEnableParam.value = 0.0
+
+        satEnableParam = AUParameterTree.createParameter(withIdentifier: "satEnable", name: "Sat Enable", address: AIVParam.satEnable.rawValue, min: 0, max: 1, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        satEnableParam.value = 0.0
+
+        delayEnableParam = AUParameterTree.createParameter(withIdentifier: "delayEnable", name: "Delay Enable", address: AIVParam.delayEnable.rawValue, min: 0, max: 1, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        delayEnableParam.value = 0.0
+
+        reverbEnableParam = AUParameterTree.createParameter(withIdentifier: "reverbEnable", name: "Reverb Enable", address: AIVParam.reverbEnable.rawValue, min: 0, max: 1, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        reverbEnableParam.value = 0.0
+
+        pitchEnableParam = AUParameterTree.createParameter(withIdentifier: "pitchEnable", name: "Pitch Enable", address: AIVParam.pitchEnable.rawValue, min: 0, max: 1, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        pitchEnableParam.value = 0.0
+
+        limiterEnableParam = AUParameterTree.createParameter(withIdentifier: "limiterEnable", name: "Limiter Enable", address: AIVParam.limiterEnable.rawValue, min: 0, max: 1, unit: .boolean, unitName: nil, flags: [.flag_IsReadable, .flag_IsWritable], valueStrings: nil, dependentParameters: nil)
+        limiterEnableParam.value = 0.0
 
 
         // 2. Create Parameter Tree
@@ -314,7 +364,9 @@ class AIVDemoParameters {
             autoLevelTargetParam, autoLevelRangeParam, autoLevelSpeedParam,
             deesserThreshParam, deesserFreqParam, deesserRatioParam, deesserRangeParam,
             gateThreshParam, gateRangeParam, gateAttackParam, gateHoldParam, gateReleaseParam, gateHysteresisParam,
-            cutoffParam, resonanceParam
+            cutoffParam, resonanceParam,
+            
+            gateEnableParam, deesserEnableParam, eqEnableParam, compEnableParam, satEnableParam, delayEnableParam, reverbEnableParam, pitchEnableParam, limiterEnableParam
         ])
 
         // 3. Connect to Kernel

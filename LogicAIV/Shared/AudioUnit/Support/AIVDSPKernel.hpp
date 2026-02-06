@@ -293,11 +293,59 @@ public:
       mLimiterLookahead = value;
       updateLimiter();
       break;
+
+    // Enables
+    case AIVParameterAddressGateEnable:
+      mGateEnable = (value > 0.5f);
+      break;
+    case AIVParameterAddressDeesserEnable:
+      mDeesserEnable = (value > 0.5f);
+      break;
+    case AIVParameterAddressEQEnable:
+      mEQEnable = (value > 0.5f);
+      break;
+    case AIVParameterAddressCompEnable:
+      mCompEnable = (value > 0.5f);
+      break;
+    case AIVParameterAddressSatEnable:
+      mSatEnable = (value > 0.5f);
+      break;
+    case AIVParameterAddressDelayEnable:
+      mDelayEnable = (value > 0.5f);
+      break;
+    case AIVParameterAddressReverbEnable:
+      mReverbEnable = (value > 0.5f);
+      break;
+    case AIVParameterAddressPitchEnable:
+      mPitchEnable = (value > 0.5f);
+      break;
+    case AIVParameterAddressLimiterEnable:
+      mLimiterEnable = (value > 0.5f);
+      break;
     }
   }
 
   AUValue getParameter(AUParameterAddress address) {
     switch (address) {
+    case AIVParameterAddressGateEnable:
+      return (AUValue)(mGateEnable ? 1.0f : 0.0f);
+    case AIVParameterAddressDeesserEnable:
+      return (AUValue)(mDeesserEnable ? 1.0f : 0.0f);
+    case AIVParameterAddressEQEnable:
+      return (AUValue)(mEQEnable ? 1.0f : 0.0f);
+    case AIVParameterAddressCompEnable:
+      return (AUValue)(mCompEnable ? 1.0f : 0.0f);
+    case AIVParameterAddressSatEnable:
+      return (AUValue)(mSatEnable ? 1.0f : 0.0f);
+    case AIVParameterAddressDelayEnable:
+      return (AUValue)(mDelayEnable ? 1.0f : 0.0f);
+    case AIVParameterAddressReverbEnable:
+
+    case AIVParameterAddressPitchEnable:
+      return (AUValue)(mPitchEnable ? 1.0f : 0.0f);
+    case AIVParameterAddressLimiterEnable:
+      return (AUValue)(mLimiterEnable ? 1.0f : 0.0f);
+
     case AIVParameterAddressGain:
       return (AUValue)mGain;
     case AIVParameterAddressBypass:
@@ -484,30 +532,37 @@ public:
           }
 
           // 0b. Noise Gate
-          s = mGate[channel].process(s);
+          if (mGateEnable)
+            s = mGate[channel].process(s);
 
           // 1. Auto Level
           s = mAutoLevel[channel].process(s);
 
           // 2. Pitch
-          s = mPitch[channel].process(s);
+          if (mPitchEnable)
+            s = mPitch[channel].process(s);
 
           // 2. Deesser
-          s = mDeesser[channel].process(s);
+          if (mDeesserEnable)
+            s = mDeesser[channel].process(s);
 
           // 3. EQ
-          s = mSafetyHPF[channel].process(s);
-          s = mHPF[channel].process(s);
-          s = mLowMidCut[channel].process(s);
-          s = mLowMidCut[channel].process(s);
-          s = mEQBand3[channel].process(s);
-          s = mLPF[channel].process(s);
+          if (mEQEnable) {
+            s = mSafetyHPF[channel].process(s);
+            s = mHPF[channel].process(s);
+            s = mLowMidCut[channel].process(s);
+            // s = mLowMidCut[channel].process(s); // REMOVED DUPLICATE
+            s = mEQBand3[channel].process(s);
+            s = mLPF[channel].process(s);
+          }
 
           // 3. Compressor (FET / AIV 76)
-          s = mCompressor[channel].process(s);
+          if (mCompEnable)
+            s = mCompressor[channel].process(s);
 
           // 4. Saturator (Module)
-          s = mSaturator[channel].process(s);
+          if (mSatEnable)
+            s = mSaturator[channel].process(s);
 
           processedBlock[k] = s;
         }
@@ -518,15 +573,18 @@ public:
         // --- POST PROCESS (1x) ---
 
         // 5. Delay
-        sample = mDelay[channel].process(sample);
+        if (mDelayEnable)
+          sample = mDelay[channel].process(sample);
 
         // 6. Reverb
-        sample = mReverb[channel].process(sample);
+        if (mReverbEnable)
+          sample = mReverb[channel].process(sample);
 
         // 7. Limiter (TruePeak - 1x is fine as it implements its own
         // lookahead/ISP check logic if robust, or just relies on previous OS
         // being clean)
-        sample = mLimiter[channel].process(sample);
+        if (mLimiterEnable)
+          sample = mLimiter[channel].process(sample);
 
         // 8. Global Gain
         out[frameIndex] = sample * mGain;
@@ -607,10 +665,12 @@ private:
       eq.setParameters(ZDFFilter::HighPass, mEQ1Freq, 0.707, 0.0,
                        mSampleRate * 4.0);
 
-    // Band 2: Low Mid Cut (Peaking)
+    // Band 2: Low Mid Cut (Peaking) - Using Biquad for stability
+    // CLAMP Q to avoid instability
+    double safeQ2 = std::max(0.1f, std::min(mEQ2Q, 10.0f));
     for (auto &eq : mLowMidCut)
-      eq.setParameters(ZDFFilter::Peaking, mEQ2Freq, mEQ2Q, mEQ2Gain,
-                       mSampleRate * 4.0);
+      eq.calculateCoefficients(BiquadFilter::Peaking, mEQ2Freq, safeQ2,
+                               mEQ2Gain, mSampleRate * 4.0);
 
     // Band 3: High Shelf (Standard Biquad)
     for (auto &eq : mEQBand3)
@@ -681,7 +741,7 @@ private:
   std::vector<Deesser> mDeesser;
   std::vector<ZDFFilter> mSafetyHPF;
   std::vector<ZDFFilter> mHPF;
-  std::vector<ZDFFilter> mLowMidCut;
+  std::vector<BiquadFilter> mLowMidCut;
   std::vector<BiquadFilter> mEQBand3;
   std::vector<ZDFFilter> mLPF;
   std::vector<FETCompressor> mCompressor;
@@ -722,4 +782,15 @@ private:
   float mResonance = 0.0f;
 
   std::vector<float> mScratchBuffer;
+
+  // Module Enables (Default OFF)
+  bool mGateEnable = false;
+  bool mDeesserEnable = false;
+  bool mEQEnable = false;
+  bool mCompEnable = false;
+  bool mSatEnable = false;
+  bool mDelayEnable = false;
+  bool mReverbEnable = false;
+  bool mPitchEnable = false;
+  bool mLimiterEnable = false;
 };

@@ -42,13 +42,13 @@ public struct AIVMainView: View {
                 // Scrollable Rack
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(spacing: 15) {
+                        OutputPanel(viewModel: viewModel)
                         InputPanel(viewModel: viewModel)
                         GatePanel(viewModel: viewModel)
                         PitchDeesserPanel(viewModel: viewModel)
                         EQPanel(viewModel: viewModel)
                         DynamicsPanel(viewModel: viewModel)
                         SpatialPanel(viewModel: viewModel)
-                        OutputPanel(viewModel: viewModel)
                     }
                     .padding()
                     .padding(.bottom, 40)
@@ -59,6 +59,11 @@ public struct AIVMainView: View {
             if let au = audioUnit {
                 viewModel.connect(audioUnit: au)
             }
+        }
+        .onChange(of: audioUnit) { newAU in
+             if let au = newAU {
+                 viewModel.connect(audioUnit: au)
+             }
         }
     }
 }

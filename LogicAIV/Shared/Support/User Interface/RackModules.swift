@@ -34,6 +34,11 @@ struct InputPanel: View {
                     .pickerStyle(SegmentedPickerStyle())
                     .frame(width: 80)
                 }
+                
+                // Saturation Enable
+                Toggle("", isOn: $viewModel.satEnable)
+                    .toggleStyle(SwitchToggleStyle(tint: .cyan))
+                    .labelsHidden()
             }
         }
     }
@@ -44,7 +49,7 @@ struct GatePanel: View {
     @ObservedObject var viewModel: AudioUnitViewModel
     
     var body: some View {
-        RackPanel(title: "Noise Gate") {
+        RackPanel(title: "Noise Gate", isEnabled: $viewModel.gateEnable) {
             HStack(spacing: 15) {
                 ArcKnob(value: $viewModel.gateThresh, range: -80...0, title: "Thresh", unit: "dB")
                 ArcKnob(value: $viewModel.gateRange, range: -80...0, title: "Range", unit: "dB")
@@ -63,7 +68,7 @@ struct PitchDeesserPanel: View {
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             // Pitch
-            RackPanel(title: "Pitch") {
+            RackPanel(title: "Pitch", isEnabled: $viewModel.pitchEnable) {
                 HStack(spacing: 15) {
                     ArcKnob(value: $viewModel.pitchAmount, range: 0...100, title: "Amount", unit: "%")
                     ArcKnob(value: $viewModel.pitchSpeed, range: 0...100, title: "Speed", unit: "%")
@@ -71,7 +76,7 @@ struct PitchDeesserPanel: View {
             }
             
             // De-Esser
-            RackPanel(title: "De-Esser") {
+            RackPanel(title: "De-Esser", isEnabled: $viewModel.deesserEnable) {
                 HStack(spacing: 15) {
                     ArcKnob(value: $viewModel.deesserThresh, range: -60...0, title: "Thresh", unit: "dB")
                     ArcKnob(value: $viewModel.deesserFreq, range: 2000...10000, title: "Freq", unit: "Hz")
@@ -87,7 +92,7 @@ struct EQPanel: View {
     @ObservedObject var viewModel: AudioUnitViewModel
     
     var body: some View {
-        RackPanel(title: "Equalizer") {
+        RackPanel(title: "Equalizer", isEnabled: $viewModel.eqEnable) {
             HStack(spacing: 0) {
                 // Low Band
                 VStack(spacing: 5) {
@@ -134,7 +139,7 @@ struct DynamicsPanel: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            RackPanel(title: "Compressor (FET)") {
+            RackPanel(title: "Compressor (FET)", isEnabled: $viewModel.compEnable) {
                 VStack {
                     HStack(spacing: 15) {
                         ArcKnob(value: $viewModel.compInput, range: -48...12, title: "Input", unit: "dB")
@@ -153,7 +158,7 @@ struct DynamicsPanel: View {
                 }
             }
             
-            RackPanel(title: "Limiter") {
+            RackPanel(title: "Limiter", isEnabled: $viewModel.limiterEnable) {
                 HStack(spacing: 15) {
                     ArcKnob(value: $viewModel.limiterCeiling, range: -6...0, title: "Ceiling", unit: "dB")
                     ArcKnob(value: $viewModel.limiterLookahead, range: 0...5, title: "Lookahead", unit: "ms")
@@ -170,7 +175,7 @@ struct SpatialPanel: View {
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             // Delay
-            RackPanel(title: "Delay") {
+            RackPanel(title: "Delay", isEnabled: $viewModel.delayEnable) {
                 HStack(spacing: 10) {
                     ArcKnob(value: $viewModel.delayTime, range: 0...2.0, title: "Time", unit: "s")
                     ArcKnob(value: $viewModel.delayFeedback, range: 0...100, title: "Fdbk", unit: "%")
@@ -179,7 +184,7 @@ struct SpatialPanel: View {
             }
             
             // Reverb
-            RackPanel(title: "Reverb") {
+            RackPanel(title: "Reverb", isEnabled: $viewModel.reverbEnable) {
                 HStack(spacing: 10) {
                     ArcKnob(value: $viewModel.reverbSize, range: 0...100, title: "Size", unit: "%")
                     ArcKnob(value: $viewModel.reverbDamp, range: 0...100, title: "Damp", unit: "%")

@@ -83,10 +83,12 @@ struct ArcKnob: View {
 // Styles the look of a Rack Unit
 struct RackPanel<Content: View>: View {
     var title: String
+    var isEnabled: Binding<Bool>? = nil
     var content: Content
     
-    init(title: String, @ViewBuilder content: () -> Content) {
+    init(title: String, isEnabled: Binding<Bool>? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.isEnabled = isEnabled
         self.content = content()
     }
     
@@ -99,6 +101,13 @@ struct RackPanel<Content: View>: View {
                     .foregroundColor(.white.opacity(0.9))
                     .tracking(1.5)
                 Spacer()
+                
+                if let isEnabled = isEnabled {
+                    Toggle("", isOn: isEnabled)
+                        .labelsHidden()
+                        .toggleStyle(SwitchToggleStyle(tint: .cyan))
+                        .scaleEffect(0.7)
+                }
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
@@ -107,6 +116,8 @@ struct RackPanel<Content: View>: View {
             // Content
             content
                 .padding(12)
+                .opacity((isEnabled?.wrappedValue ?? true) ? 1.0 : 0.4)
+                .disabled(!(isEnabled?.wrappedValue ?? true))
         }
         .background(Color(red: 0.1, green: 0.1, blue: 0.12))
         .cornerRadius(6)
@@ -155,19 +166,32 @@ struct ModernSlider: View {
 
 struct EffectGroup<Content: View>: View {
     var title: String
+    var isEnabled: Binding<Bool>? = nil
     var content: Content
     
-    init(title: String, @ViewBuilder content: () -> Content) {
+    init(title: String, isEnabled: Binding<Bool>? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.isEnabled = isEnabled
         self.content = content()
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(title)
-                .font(.system(size: 10, weight: .bold))
-                .foregroundColor(.cyan)
-                .tracking(1)
+            HStack {
+                Text(title)
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.cyan)
+                    .tracking(1)
+                
+                Spacer()
+                
+                if let isEnabled = isEnabled {
+                    Toggle("", isOn: isEnabled)
+                        .labelsHidden()
+                        .toggleStyle(SwitchToggleStyle(tint: .cyan))
+                        .scaleEffect(0.8)
+                }
+            }
             
             VStack {
                 content
@@ -179,6 +203,8 @@ struct EffectGroup<Content: View>: View {
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(Color.white.opacity(0.1), lineWidth: 1)
             )
+            .opacity((isEnabled?.wrappedValue ?? true) ? 1.0 : 0.4)
+            .disabled(!(isEnabled?.wrappedValue ?? true))
         }
     }
 }

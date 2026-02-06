@@ -139,4 +139,25 @@ the AIV app demo sound works well with the entire vocal chain, however when i ad
 
 ---
 
-problem persists: the AIV "Play" button sound works well with the entire vocal chain, no kernel nor DSP adjustments needed, BUT when i add AIVDemo inside Logic Pro the AIVDemo automatically lowers the sound and never applies any of the vocal chain effects, again APP IS OK - APP ALL EFFECT WORK EVEN APP BYPASS WORKS AND AU IS STILL BROKEN - AU ALL EFFECT NOT WORKING, AU HAS JUST MUSHED UP SOUND, AU BYPASS DOES NOTHING
+problem persists: the AIV "Play" button sound works well with the entire vocal chain, no kernel nor DSP adjustments needed, BUT when i add AIVDemo inside Logic Pro the AIVDemo automatically lowers the sound and never applies any of the vocal chain effects, again APP IS OK - APP ALL EFFECT WORK AND APP BYPASS WORKS AND AU IS STILL BROKEN - AU ALL EFFECT NOT WORKING, AU HAS JUST MUSHED UP SOUND, AU BYPASS DOES NOTHING
+
+---
+
+AU controls view (called "Controls") works perfectly in Logic Pro, AU rack view (called "AIVDemo") still has no effect in Logic Pro, but rack view works perfectly in standalone app
+
+---
+
+equalizer mid gain around 9dB causes screetch and sound stops working
+
+---
+
+mid gain still causes screetch past 9.50dB likely due to not being limited in regard to Q value, also add toggle to all rack components making them off by default
+
+---
+
+pitch and limiter is missing a toggle, move master rack to top
+
+---
+
+remove the old parameters from top of app view now that they're part of the proper interface
+
