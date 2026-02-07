@@ -32,7 +32,7 @@
 					<key>factoryFunction</key>
 					<string>$(PRODUCT_MODULE_NAME).AIVDemoViewController</string>
 					<key>manufacturer</key>
-					<string>iairu</string>
+					<string>iair</string>
 					<key>name</key>
 					<string>iairu: AIVAlpha</string>
 					<key>sandboxSafe</key>

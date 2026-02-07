@@ -60,7 +60,7 @@ public class AudioUnitManager {
     private let playEngine = SimplePlayEngine()
 
     // A token for our registration to observe parameter value changes.
-    private var parameterObserverToken: AUParameterObserverToken!
+    private var parameterObserverToken: AUParameterObserverToken?
 
     // The AudioComponentDescription matching the AIVExtension Info.plist
     private var componentDescription: AudioComponentDescription = {
@@ -69,14 +69,14 @@ public class AudioUnitManager {
         var componentDescription = AudioComponentDescription()
         componentDescription.componentType = kAudioUnitType_Effect
         componentDescription.componentSubType = 0x666c7472 /*'fltr'*/
-        componentDescription.componentManufacturer = 0x44656d6f /*'Demo'*/
+        componentDescription.componentManufacturer = 0x69616972 /*'iair'*/
         componentDescription.componentFlags = 0
         componentDescription.componentFlagsMask = 0
 
         return componentDescription
     }()
 
-    private let componentName = "Demo: AIVDemo"
+    private let componentName = "iairu: AIVAlpha"
 
     public init() {
 
@@ -149,7 +149,9 @@ public class AudioUnitManager {
     public func cleanup() {
         playEngine.stopPlaying()
 
-        guard let parameterTree = audioUnit?.parameterTree else { return }
-        parameterTree.removeParameterObserver(parameterObserverToken)
+        guard let parameterTree = audioUnit?.parameterTree,
+              let token = parameterObserverToken else { return }
+        parameterTree.removeParameterObserver(token)
+        parameterObserverToken = nil
     }
 }
