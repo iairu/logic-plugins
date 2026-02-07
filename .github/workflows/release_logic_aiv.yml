@@ -32,9 +32,19 @@ jobs:
             -configuration Release \
             -destination 'platform=macOS' \
             -derivedDataPath build \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=YES \
             clean build
+
+      - name: Sign App
+        run: |
+          cd LogicAIV/build/Build/Products/Release/
+          # Sign Framework
+          codesign --force --verbose -s - "AIV.app/Contents/Frameworks/AIVFramework.framework/Versions/Current"
+          # Sign Extension
+          codesign --force --verbose -s - "AIV.app/Contents/PlugIns/AIVExtension.appex"
+          # Sign Main App
+          codesign --force --verbose -s - "AIV.app"
 
       - name: Archive and Zip
         run: |
