@@ -91,7 +91,7 @@ public class AudioUnitManager {
         AUAudioUnit.registerSubclass(AIVDemo.self,
                                      as: componentDescription,
                                      name: componentName,
-                                     version: UInt32.max)
+                                     version: 0x00010200)
 
         AVAudioUnit.instantiate(with: componentDescription) { audioUnit, error in
             guard error == nil, let audioUnit = audioUnit else {
@@ -182,9 +182,12 @@ public class RegistrationManager {
         status += "\n--- Pluginkit Query ---\n"
         
         // 2. Run pluginkit
+        let bundleID = "com.iairu.AIV.AIVExtension"
+        status += "Searching for Bundle ID: \(bundleID)\n"
+        
         let task = Process()
         task.launchPath = "/usr/bin/pluginkit"
-        task.arguments = ["-m", "-v", "-D", "-i", "com.iairu.AIV.AIVExtension"]
+        task.arguments = ["-m", "-v", "-D", "-i", bundleID]
         
         let pipe = Pipe()
         task.standardOutput = pipe
@@ -195,16 +198,77 @@ public class RegistrationManager {
             task.waitUntilExit()
             
             let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8), !output.isEmpty {
+            if let output = String(data: data, encoding: .utf8), !output.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 status += output
             } else {
-                status += "⚠️ No output from pluginkit (Extension not found or permission denied)\n"
+                status += "⚠️ No matches found for \(bundleID).\n"
+                status += "   This usually means the extension is not registered or Sandbox blocks query.\n"
+                status += "   Try moving App to /Applications and run again.\n"
             }
         } catch {
             status += "Error running pluginkit: \(error)\n"
         }
         
         return status
+    }
+    
+    public static func registerPlugin() -> String {
+        var status = "--- Forcing Registration ---\n"
+        
+        // 1. Locate the .appex bundle
+        guard let pluginsURL = Bundle.main.builtInPlugInsURL else {
+            return status + "❌ Error: Could not find PlugIns directory in bundle.\n"
+        }
+        
+        let extensionURL = pluginsURL.appendingPathComponent("AIVExtension.appex")
+        let extensionPath = extensionURL.path
+        
+        status += "Target: \(extensionPath)\n"
+        
+        if !FileManager.default.fileExists(atPath: extensionPath) {
+             return status + "❌ Error: Extension not found at expected path.\n"
+        }
+        
+        // 2. Run pluginkit -a (Add)
+        status += "1. Adding to registry (pluginkit -a)...\n"
+        let addResult = runProcess(launchPath: "/usr/bin/pluginkit", arguments: ["-a", extensionPath])
+        status += addResult.output
+        if !addResult.success { status += "⚠️ Warning: 'Add' command execution failed.\n" }
+        
+        // 3. Run pluginkit -e use (Enable)
+        let bundleID = "com.iairu.AIV.AIVExtension"
+        status += "2. Enabling (pluginkit -e use -i \(bundleID))...\n"
+        let enableResult = runProcess(launchPath: "/usr/bin/pluginkit", arguments: ["-e", "use", "-i", bundleID])
+        status += enableResult.output
+         if !enableResult.success { status += "⚠️ Warning: 'Enable' command execution failed.\n" }
+        
+        // 4. Re-check status
+        status += "\n--- Verification ---\n"
+        status += checkStatus()
+        
+        return status
+    }
+    
+    // Helper for running processes
+    private static func runProcess(launchPath: String, arguments: [String]) -> (success: Bool, output: String) {
+        let task = Process()
+        task.launchPath = launchPath
+        task.arguments = arguments
+        
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.standardError = pipe
+        
+        do {
+            try task.run()
+            task.waitUntilExit()
+            
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let output = String(data: data, encoding: .utf8) ?? ""
+            return (task.terminationStatus == 0, output)
+        } catch {
+            return (false, "Error: \(error)\n")
+        }
     }
 }
 #endif

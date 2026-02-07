@@ -120,9 +120,11 @@ class MainViewController: NSViewController {
     
     private var statusTextView: NSTextView?
     
-    private func setupRegistrationUI() {
-        let statusButton = NSButton(title: "Check Registration Status", target: self, action: #selector(checkRegistrationStatus))
-        statusButton.frame = CGRect(x: 20, y: 20, width: 200, height: 30) // Bottom left
+        let statusButton = NSButton(title: "Check Status", target: self, action: #selector(checkRegistrationStatus))
+        statusButton.frame = CGRect(x: 20, y: 20, width: 120, height: 30)
+        
+        let forceButton = NSButton(title: "Force Register", target: self, action: #selector(forceRegister))
+        forceButton.frame = CGRect(x: 150, y: 20, width: 120, height: 30)
         
         let scrollView = NSScrollView(frame: CGRect(x: 20, y: 60, width: 400, height: 150))
         scrollView.hasVerticalScroller = true
@@ -131,23 +133,27 @@ class MainViewController: NSViewController {
         let textView = NSTextView(frame: scrollView.bounds)
         textView.isEditable = false
         textView.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
-        textView.string = "Click 'Check Registration Status' to verify..."
+        textView.string = "Click 'Check Status' to verify or 'Force Register' to re-add..."
         
         scrollView.documentView = textView
         self.statusTextView = textView
         
-        // Add to view (overlay on top of existing content for debug visibility)
         self.view.addSubview(scrollView)
         self.view.addSubview(statusButton)
+        self.view.addSubview(forceButton)
         
-        // Pin to bottom left to avoid obscuring main UI too much (if possible, or just overlay)
         statusButton.translatesAutoresizingMaskIntoConstraints = false
+        forceButton.translatesAutoresizingMaskIntoConstraints = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             statusButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             statusButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
-            statusButton.widthAnchor.constraint(equalToConstant: 200),
+            statusButton.widthAnchor.constraint(equalToConstant: 120),
+            
+            forceButton.leadingAnchor.constraint(equalTo: statusButton.trailingAnchor, constant: 10),
+            forceButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
+            forceButton.widthAnchor.constraint(equalToConstant: 120),
             
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             scrollView.bottomAnchor.constraint(equalTo: statusButton.topAnchor, constant: -10),
@@ -160,6 +166,16 @@ class MainViewController: NSViewController {
         statusTextView?.string = "Checking..."
         DispatchQueue.global(qos: .userInitiated).async {
             let status = RegistrationManager.checkStatus()
+            DispatchQueue.main.async {
+                self.statusTextView?.string = status
+            }
+        }
+    }
+    
+    @objc private func forceRegister() {
+        statusTextView?.string = "Forcing registration (may take a moment)..."
+        DispatchQueue.global(qos: .userInitiated).async {
+            let status = RegistrationManager.registerPlugin()
             DispatchQueue.main.async {
                 self.statusTextView?.string = status
             }
